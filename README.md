@@ -2,7 +2,7 @@
 
 Phone-first shuttle-tracking proof of concept for Fehren ↔ Valley Christian’s Skyway campus in San Jose.
 
-[View the live site](https://thatxliner.github.io/BusTrackr/)
+[View the live site](https://bryanhu.com/BusTrackr/)
 
 ## Run
 
