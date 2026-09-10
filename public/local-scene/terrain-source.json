@@ -1,0 +1,80 @@
+{
+  "sourceUrl": "https://rockyweb.usgs.gov/vdelivery/Datasets/Staged/Elevation/LPC/Projects/CA_SantaClaraCounty_2020_A20/CA_SantaClaraCounty_2020/LAZ/USGS_LPC_CA_SantaClaraCounty_2020_A20_17509250.laz",
+  "sourceLazSha256": "ae2ef41e199805f769adbad0953ec3e6f7e30cf53dde47c17955ad4c50f58801",
+  "sourceFile": ".cache-local-scene/campus.laz",
+  "horizontalCrs": "EPSG:6420",
+  "horizontalSourceUnits": "US survey feet",
+  "usSurveyFootToMeter": 0.3048006096012192,
+  "dimensions": {
+    "width": 640,
+    "height": 512,
+    "gridPointCount": 327680
+  },
+  "units": {
+    "gridCoordinates": "longitude/latitude degrees",
+    "elevation": "meters NAVD88",
+    "lidarHorizontalCoordinates": "local meters for interpolation; source EPSG:6420 feet converted to meters for boundary distance"
+  },
+  "method": {
+    "baseline": "Legacy DEM sampled bilinearly with the historical renderer clamp to width-2 and height-2 interpolation cells",
+    "groundClass": 2,
+    "thinning": "Class-2 points averaged by 1.5 m local XY grid cell with numpy unique/bincount",
+    "interpolation": "scipy LinearNDInterpolator over thinned local XY means",
+    "nearestDistance": "cKDTree nearest thinned ground sample; accepted at <=15 m",
+    "blend": "Inside the LAZ horizontal rectangle, linear 10 m boundary strip from weight 0 at the boundary to weight 1 at 10 m; outside keeps the legacy baseline"
+  },
+  "limitation": "This is an offline interpolation of existing USGS class-2 LiDAR and the legacy DEM; no new survey was performed.",
+  "targetBounds": {
+    "xmin": -121.843,
+    "ymin": 37.2697,
+    "xmax": -121.8215,
+    "ymax": 37.287
+  },
+  "grid": {
+    "width": 640,
+    "height": 512,
+    "west": -121.843,
+    "north": 37.287,
+    "dx": 3.364632237872173e-05,
+    "dy": 3.3855185909978005e-05
+  },
+  "sourceLidar": {
+    "class2PointCount": 6842621,
+    "finiteClass2PointCount": 6842621,
+    "horizontalCrs": "EPSG:6420",
+    "horizontalUnits": "US survey feet",
+    "sourceBoundsFeet": {
+      "xmin": 6175000.0,
+      "ymin": 1925000.0,
+      "xmax": 6177499.999,
+      "ymax": 1927499.999
+    },
+    "pointsBeforeThinning": 6842621,
+    "pointsAfterThinning": 203879,
+    "rectangleBoundsMeters": {
+      "xmin": 1882143.7642875286,
+      "ymin": 586741.1734823469,
+      "xmax": 1882905.7655067309,
+      "ymax": 587503.1747015493
+    }
+  },
+  "gridCounts": {
+    "targetGridPoints": 327680,
+    "gridPointsLidarInfluenced": 45162,
+    "interpolatedFiniteAndNearestWithin15m": 45162,
+    "gridPointsAcceptedWithinLidarRectangle": 45162,
+    "gridPointsBaselineOnly": 282518,
+    "legacyOutsideBounds": 15872,
+    "legacyClamped": 16896
+  },
+  "legacyDem": {
+    "path": "public/terrain/elevation.json",
+    "width": 512,
+    "height": 512,
+    "west": -121.843,
+    "north": 37.2885,
+    "east": -121.8225400390625,
+    "south": 37.2680400390625,
+    "targetPointsOutsideBounds": 15872
+  }
+}

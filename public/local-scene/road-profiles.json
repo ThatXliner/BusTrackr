@@ -1,0 +1,1521 @@
+{
+  "source": "OpenStreetMap geometry supplied via the Overpass API.",
+  "caveat": "Widths, lane counts and curbs are visual estimates; OSM supplies centerlines and names, not verified lane geometry.",
+  "routesSha256": "5f849a9dc6d2aa43c3a02ff03e6edd40c365c786d0776b11d7a0a99e25f59c6b",
+  "inbound": [
+    {
+      "name": "Fehren Drive",
+      "highway": "tertiary",
+      "wayId": 936634659,
+      "width": 10,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Fehren Drive",
+      "highway": "tertiary",
+      "wayId": 936634659,
+      "width": 10,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 415851092,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 846071898,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 846071898,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 846071898,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 846071898,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 846071898,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 846071898,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 846071899,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 1215548890,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 1215548890,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 1215548890,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 534423470,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 534423470,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 534423478,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 534423476,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 534423476,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 688012755,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 535154598,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 535154593,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 535154596,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 535154597,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 535154597,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 688012753,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 615062954,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 615062954,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 615062954,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 615062954,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 28497511,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 28497511,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Senter Road",
+      "highway": "secondary",
+      "wayId": 415862644,
+      "width": 18,
+      "lanes": 4,
+      "curb": true
+    },
+    {
+      "name": "Senter Road",
+      "highway": "secondary",
+      "wayId": 415862644,
+      "width": 18,
+      "lanes": 4,
+      "curb": true
+    },
+    {
+      "name": "Senter Road",
+      "highway": "secondary",
+      "wayId": 415862644,
+      "width": 18,
+      "lanes": 4,
+      "curb": true
+    },
+    {
+      "name": "Senter Road",
+      "highway": "secondary",
+      "wayId": 415862644,
+      "width": 18,
+      "lanes": 4,
+      "curb": true
+    },
+    {
+      "name": "Senter Road",
+      "highway": "secondary",
+      "wayId": 614926550,
+      "width": 18,
+      "lanes": 4,
+      "curb": true
+    },
+    {
+      "name": "Senter Road",
+      "highway": "secondary",
+      "wayId": 790207538,
+      "width": 18,
+      "lanes": 4,
+      "curb": true
+    },
+    {
+      "name": "Senter Road",
+      "highway": "secondary",
+      "wayId": 790207538,
+      "width": 18,
+      "lanes": 4,
+      "curb": true
+    },
+    {
+      "name": "Senter Road",
+      "highway": "secondary",
+      "wayId": 790207538,
+      "width": 18,
+      "lanes": 4,
+      "curb": true
+    },
+    {
+      "name": "Senter Road",
+      "highway": "secondary",
+      "wayId": 415862650,
+      "width": 18,
+      "lanes": 4,
+      "curb": true
+    },
+    {
+      "name": "Senter Road",
+      "highway": "secondary",
+      "wayId": 415862650,
+      "width": 18,
+      "lanes": 4,
+      "curb": true
+    },
+    {
+      "name": "Senter Road",
+      "highway": "secondary",
+      "wayId": 415862650,
+      "width": 18,
+      "lanes": 4,
+      "curb": true
+    },
+    {
+      "name": "Senter Road",
+      "highway": "secondary",
+      "wayId": 415862650,
+      "width": 18,
+      "lanes": 4,
+      "curb": true
+    },
+    {
+      "name": "Senter Road",
+      "highway": "secondary",
+      "wayId": 1113372761,
+      "width": 18,
+      "lanes": 4,
+      "curb": true
+    },
+    {
+      "name": "Senter Road",
+      "highway": "secondary",
+      "wayId": 1113372761,
+      "width": 18,
+      "lanes": 4,
+      "curb": true
+    },
+    {
+      "name": "Senter Road",
+      "highway": "secondary",
+      "wayId": 714490446,
+      "width": 18,
+      "lanes": 4,
+      "curb": true
+    },
+    {
+      "name": "Senter Road",
+      "highway": "secondary",
+      "wayId": 714490446,
+      "width": 18,
+      "lanes": 4,
+      "curb": true
+    },
+    {
+      "name": "Senter Road",
+      "highway": "secondary",
+      "wayId": 1419885596,
+      "width": 18,
+      "lanes": 4,
+      "curb": true
+    },
+    {
+      "name": "Senter Road",
+      "highway": "secondary",
+      "wayId": 415862639,
+      "width": 18,
+      "lanes": 4,
+      "curb": true
+    },
+    {
+      "name": "Senter Road",
+      "highway": "secondary",
+      "wayId": 415862639,
+      "width": 18,
+      "lanes": 4,
+      "curb": true
+    },
+    {
+      "name": "Senter Road",
+      "highway": "secondary",
+      "wayId": 1113372760,
+      "width": 18,
+      "lanes": 4,
+      "curb": true
+    },
+    {
+      "name": "Senter Road",
+      "highway": "secondary",
+      "wayId": 1113372760,
+      "width": 18,
+      "lanes": 4,
+      "curb": true
+    },
+    {
+      "name": "Senter Road",
+      "highway": "secondary",
+      "wayId": 1113372760,
+      "width": 18,
+      "lanes": 4,
+      "curb": true
+    },
+    {
+      "name": "Senter Road",
+      "highway": "secondary",
+      "wayId": 1113372760,
+      "width": 18,
+      "lanes": 4,
+      "curb": true
+    },
+    {
+      "name": "Senter Road",
+      "highway": "secondary",
+      "wayId": 1113372759,
+      "width": 18,
+      "lanes": 4,
+      "curb": true
+    },
+    {
+      "name": "Senter Road",
+      "highway": "secondary",
+      "wayId": 1113372759,
+      "width": 18,
+      "lanes": 4,
+      "curb": true
+    },
+    {
+      "name": "Senter Road",
+      "highway": "secondary",
+      "wayId": 8938921,
+      "width": 18,
+      "lanes": 4,
+      "curb": true
+    },
+    {
+      "name": "Senter Road",
+      "highway": "secondary",
+      "wayId": 8938921,
+      "width": 18,
+      "lanes": 4,
+      "curb": true
+    },
+    {
+      "name": "Senter Road",
+      "highway": "secondary",
+      "wayId": 8938921,
+      "width": 18,
+      "lanes": 4,
+      "curb": true
+    },
+    {
+      "name": "Senter Road",
+      "highway": "secondary",
+      "wayId": 8938921,
+      "width": 18,
+      "lanes": 4,
+      "curb": true
+    },
+    {
+      "name": "Senter Road",
+      "highway": "secondary",
+      "wayId": 8938921,
+      "width": 18,
+      "lanes": 4,
+      "curb": true
+    },
+    {
+      "name": "Senter Road",
+      "highway": "secondary",
+      "wayId": 8938921,
+      "width": 18,
+      "lanes": 4,
+      "curb": true
+    },
+    {
+      "name": "Senter Road",
+      "highway": "secondary",
+      "wayId": 8938921,
+      "width": 18,
+      "lanes": 4,
+      "curb": true
+    },
+    {
+      "name": "Senter Road",
+      "highway": "secondary",
+      "wayId": 8938921,
+      "width": 18,
+      "lanes": 4,
+      "curb": true
+    },
+    {
+      "name": "Senter Road",
+      "highway": "secondary",
+      "wayId": 8938921,
+      "width": 18,
+      "lanes": 4,
+      "curb": true
+    },
+    {
+      "name": "Senter Road",
+      "highway": "secondary",
+      "wayId": 1113372758,
+      "width": 18,
+      "lanes": 4,
+      "curb": true
+    },
+    {
+      "name": "Senter Road",
+      "highway": "secondary",
+      "wayId": 1113372758,
+      "width": 18,
+      "lanes": 4,
+      "curb": true
+    },
+    {
+      "name": "Senter Road",
+      "highway": "secondary",
+      "wayId": 1113372758,
+      "width": 18,
+      "lanes": 4,
+      "curb": true
+    },
+    {
+      "name": "Senter Road",
+      "highway": "secondary",
+      "wayId": 1113372758,
+      "width": 18,
+      "lanes": 4,
+      "curb": true
+    },
+    {
+      "name": "Senter Road",
+      "highway": "secondary",
+      "wayId": 1113372758,
+      "width": 18,
+      "lanes": 4,
+      "curb": true
+    },
+    {
+      "name": "Diamond Heights Drive",
+      "highway": "unclassified",
+      "wayId": 8957286,
+      "width": 8,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Diamond Heights Drive",
+      "highway": "unclassified",
+      "wayId": 8957286,
+      "width": 8,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Diamond Heights Drive",
+      "highway": "unclassified",
+      "wayId": 8957286,
+      "width": 8,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Diamond Heights Drive",
+      "highway": "unclassified",
+      "wayId": 8957286,
+      "width": 8,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Diamond Heights Drive",
+      "highway": "unclassified",
+      "wayId": 8957286,
+      "width": 8,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Diamond Heights Drive",
+      "highway": "unclassified",
+      "wayId": 8957286,
+      "width": 8,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Diamond Heights Drive",
+      "highway": "unclassified",
+      "wayId": 8957286,
+      "width": 8,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Diamond Heights Drive",
+      "highway": "unclassified",
+      "wayId": 8957286,
+      "width": 8,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Diamond Heights Drive",
+      "highway": "unclassified",
+      "wayId": 8957286,
+      "width": 8,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Diamond Heights Drive",
+      "highway": "unclassified",
+      "wayId": 8957286,
+      "width": 8,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Diamond Heights Drive",
+      "highway": "service",
+      "wayId": 94499710,
+      "width": 8,
+      "lanes": 2,
+      "curb": false
+    },
+    {
+      "name": "Diamond Heights Drive",
+      "highway": "service",
+      "wayId": 94499710,
+      "width": 8,
+      "lanes": 2,
+      "curb": false
+    },
+    {
+      "name": "Diamond Heights Drive",
+      "highway": "service",
+      "wayId": 94499710,
+      "width": 8,
+      "lanes": 2,
+      "curb": false
+    },
+    {
+      "name": "Diamond Heights Drive",
+      "highway": "service",
+      "wayId": 94499710,
+      "width": 8,
+      "lanes": 2,
+      "curb": false
+    },
+    {
+      "name": "unknown",
+      "highway": "service",
+      "wayId": 94499751,
+      "width": 6.5,
+      "lanes": 2,
+      "curb": false
+    },
+    {
+      "name": "unknown",
+      "highway": "service",
+      "wayId": 94499751,
+      "width": 6.5,
+      "lanes": 2,
+      "curb": false
+    },
+    {
+      "name": "unknown",
+      "highway": "service",
+      "wayId": 94499751,
+      "width": 6.5,
+      "lanes": 2,
+      "curb": false
+    },
+    {
+      "name": "unknown",
+      "highway": "service",
+      "wayId": 94499751,
+      "width": 6.5,
+      "lanes": 2,
+      "curb": false
+    },
+    {
+      "name": "unknown",
+      "highway": "service",
+      "wayId": 94499751,
+      "width": 6.5,
+      "lanes": 2,
+      "curb": false
+    },
+    {
+      "name": "unknown",
+      "highway": "service",
+      "wayId": 94499751,
+      "width": 6.5,
+      "lanes": 2,
+      "curb": false
+    },
+    {
+      "name": "unknown",
+      "highway": "service",
+      "wayId": 643481632,
+      "width": 6.5,
+      "lanes": 2,
+      "curb": false
+    },
+    {
+      "name": "unknown",
+      "highway": "service",
+      "wayId": 643481632,
+      "width": 6.5,
+      "lanes": 2,
+      "curb": false
+    },
+    {
+      "name": "unknown",
+      "highway": "service",
+      "wayId": 643481632,
+      "width": 6.5,
+      "lanes": 2,
+      "curb": false
+    },
+    {
+      "name": "unknown",
+      "highway": "service",
+      "wayId": 643481632,
+      "width": 6.5,
+      "lanes": 2,
+      "curb": false
+    },
+    {
+      "name": "unknown",
+      "highway": "service",
+      "wayId": 643481632,
+      "width": 6.5,
+      "lanes": 2,
+      "curb": false
+    },
+    {
+      "name": "unknown",
+      "highway": "service",
+      "wayId": 643481632,
+      "width": 6.5,
+      "lanes": 2,
+      "curb": false
+    },
+    {
+      "name": "unknown",
+      "highway": "service",
+      "wayId": 643481632,
+      "width": 6.5,
+      "lanes": 2,
+      "curb": false
+    },
+    {
+      "name": "unknown",
+      "highway": "service",
+      "wayId": 643481632,
+      "width": 6.5,
+      "lanes": 2,
+      "curb": false
+    },
+    {
+      "name": "unknown",
+      "highway": "service",
+      "wayId": 643481632,
+      "width": 6.5,
+      "lanes": 2,
+      "curb": false
+    },
+    {
+      "name": "unknown",
+      "highway": "service",
+      "wayId": 94499728,
+      "width": 6.5,
+      "lanes": 2,
+      "curb": false
+    },
+    {
+      "name": "unknown",
+      "highway": "service",
+      "wayId": 1191185342,
+      "width": 6.5,
+      "lanes": 2,
+      "curb": false
+    },
+    {
+      "name": "unknown",
+      "highway": "service",
+      "wayId": 1191185342,
+      "width": 6.5,
+      "lanes": 2,
+      "curb": false
+    },
+    {
+      "name": "Skyway Drive",
+      "highway": "residential",
+      "wayId": 94417072,
+      "width": 7.2,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Skyway Drive",
+      "highway": "residential",
+      "wayId": 94417072,
+      "width": 7.2,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Skyway Drive",
+      "highway": "residential",
+      "wayId": 94417072,
+      "width": 7.2,
+      "lanes": 2,
+      "curb": true
+    }
+  ],
+  "outbound": [
+    {
+      "name": "Skyway Drive",
+      "highway": "residential",
+      "wayId": 94417072,
+      "width": 7.2,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Skyway Drive",
+      "highway": "residential",
+      "wayId": 94417072,
+      "width": 7.2,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Skyway Drive",
+      "highway": "residential",
+      "wayId": 94417072,
+      "width": 7.2,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Skyway Drive",
+      "highway": "residential",
+      "wayId": 94417072,
+      "width": 7.2,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Skyway Drive",
+      "highway": "residential",
+      "wayId": 94417072,
+      "width": 7.2,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Skyway Drive",
+      "highway": "residential",
+      "wayId": 94417072,
+      "width": 7.2,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Skyway Drive",
+      "highway": "residential",
+      "wayId": 94417072,
+      "width": 7.2,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Skyway Drive",
+      "highway": "residential",
+      "wayId": 94417072,
+      "width": 7.2,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Skyway Drive",
+      "highway": "residential",
+      "wayId": 94417072,
+      "width": 7.2,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Skyway Drive",
+      "highway": "residential",
+      "wayId": 94417072,
+      "width": 7.2,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Skyway Drive",
+      "highway": "residential",
+      "wayId": 94417072,
+      "width": 7.2,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Skyway Drive",
+      "highway": "residential",
+      "wayId": 94417072,
+      "width": 7.2,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Skyway Drive",
+      "highway": "residential",
+      "wayId": 94417072,
+      "width": 7.2,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Skyway Drive",
+      "highway": "residential",
+      "wayId": 94417072,
+      "width": 7.2,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Skyway Drive",
+      "highway": "residential",
+      "wayId": 94417072,
+      "width": 7.2,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Skyway Drive",
+      "highway": "residential",
+      "wayId": 94417072,
+      "width": 7.2,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Skyway Drive",
+      "highway": "residential",
+      "wayId": 94417072,
+      "width": 7.2,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Skyway Drive",
+      "highway": "residential",
+      "wayId": 94417072,
+      "width": 7.2,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Skyway Drive",
+      "highway": "residential",
+      "wayId": 94417072,
+      "width": 7.2,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Skyway Drive",
+      "highway": "residential",
+      "wayId": 94417072,
+      "width": 7.2,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Skyway Drive",
+      "highway": "residential",
+      "wayId": 94417072,
+      "width": 7.2,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Skyway Drive",
+      "highway": "residential",
+      "wayId": 94417072,
+      "width": 7.2,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Skyway Drive",
+      "highway": "residential",
+      "wayId": 94417072,
+      "width": 7.2,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Skyway Drive",
+      "highway": "service",
+      "wayId": 94417066,
+      "width": 7.2,
+      "lanes": 2,
+      "curb": false
+    },
+    {
+      "name": "Skyway Drive",
+      "highway": "service",
+      "wayId": 94417066,
+      "width": 7.2,
+      "lanes": 2,
+      "curb": false
+    },
+    {
+      "name": "Skyway Drive",
+      "highway": "service",
+      "wayId": 94417066,
+      "width": 7.2,
+      "lanes": 2,
+      "curb": false
+    },
+    {
+      "name": "Skyway Drive",
+      "highway": "residential",
+      "wayId": 94417076,
+      "width": 7.2,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Skyway Drive",
+      "highway": "residential",
+      "wayId": 94417076,
+      "width": 7.2,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Skyway Drive",
+      "highway": "residential",
+      "wayId": 415860298,
+      "width": 7.2,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Skyway Drive",
+      "highway": "residential",
+      "wayId": 517261531,
+      "width": 7.2,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Skyway Drive",
+      "highway": "residential",
+      "wayId": 415860303,
+      "width": 7.2,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Skyway Drive",
+      "highway": "residential",
+      "wayId": 415860303,
+      "width": 7.2,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Skyway Drive",
+      "highway": "residential",
+      "wayId": 415860300,
+      "width": 7.2,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Skyway Drive",
+      "highway": "residential",
+      "wayId": 415860300,
+      "width": 7.2,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 417704279,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 417704279,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 417704279,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 417704279,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 417704279,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 417704279,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 417704279,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 417704279,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 417704279,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 417704279,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 417704279,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 417704279,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 417704279,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 417704279,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 417704279,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 417704279,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 417704279,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 417704251,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 614926557,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 28497511,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 28497511,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 615062954,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 615062954,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 615062954,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 615062954,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 688012753,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 535154597,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 535154597,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 535154596,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 535154593,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 535154598,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 688012755,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 534423476,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 534423476,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 534423478,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 534423470,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 534423470,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 1215548890,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 1215548890,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 1215548890,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 846071899,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 846071898,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 846071898,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 846071898,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 846071898,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 846071898,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 846071898,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Monterey Road",
+      "highway": "primary",
+      "wayId": 415851092,
+      "width": 24,
+      "lanes": 6,
+      "curb": true
+    },
+    {
+      "name": "Fehren Drive",
+      "highway": "tertiary",
+      "wayId": 936634659,
+      "width": 10,
+      "lanes": 2,
+      "curb": true
+    },
+    {
+      "name": "Fehren Drive",
+      "highway": "tertiary",
+      "wayId": 936634659,
+      "width": 10,
+      "lanes": 2,
+      "curb": true
+    }
+  ]
+}

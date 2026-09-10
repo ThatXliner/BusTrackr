@@ -1,0 +1,770 @@
+{
+  "source": "https://rockyweb.usgs.gov/vdelivery/Datasets/Staged/Elevation/LPC/Projects/CA_SantaClaraCounty_2020_A20/CA_SantaClaraCounty_2020/LAZ/USGS_LPC_CA_SantaClaraCounty_2020_A20_17509250.laz",
+  "sourceDate": "2020",
+  "acquisitionYear": 2020,
+  "verticalDatum": "NAVD88 meters",
+  "method": "Class-6 LiDAR points inside eligible OSM footprint polygons; eave and ridge are measured 5th and 95th height percentiles in meters.",
+  "limitations": "Profiles are emitted only with dense measured coverage and a <=8 m percentile spread; no wall or base heights are inferred.",
+  "footprintsSha256": "b5f8c78586c574998ab1935065300e94fe338acb392342ae724d04467e2e605e",
+  "sourceLazSha256": "ae2ef41e199805f769adbad0953ec3e6f7e30cf53dde47c17955ad4c50f58801",
+  "candidateFootprintCount": 140,
+  "class6PointCount": 2797894,
+  "profiles": [
+    {
+      "id": 954099187,
+      "pointCount": 5433,
+      "eave": 54.35,
+      "ridge": 55.782
+    },
+    {
+      "id": 954099256,
+      "pointCount": 4757,
+      "eave": 54.735,
+      "ridge": 55.839
+    },
+    {
+      "id": 954099259,
+      "pointCount": 4692,
+      "eave": 54.727,
+      "ridge": 55.816
+    },
+    {
+      "id": 954099260,
+      "pointCount": 5900,
+      "eave": 54.646,
+      "ridge": 55.807
+    },
+    {
+      "id": 956122968,
+      "pointCount": 3946,
+      "eave": 57.52,
+      "ridge": 59.125
+    },
+    {
+      "id": 956122970,
+      "pointCount": 3858,
+      "eave": 57.663,
+      "ridge": 59.245
+    },
+    {
+      "id": 956123293,
+      "pointCount": 3576,
+      "eave": 93.164,
+      "ridge": 94.637
+    },
+    {
+      "id": 956123308,
+      "pointCount": 3949,
+      "eave": 92.208,
+      "ridge": 93.886
+    },
+    {
+      "id": 956123316,
+      "pointCount": 4071,
+      "eave": 86.625,
+      "ridge": 90.377
+    },
+    {
+      "id": 956123319,
+      "pointCount": 3415,
+      "eave": 82.248,
+      "ridge": 86.331
+    },
+    {
+      "id": 956123681,
+      "pointCount": 7411,
+      "eave": 92.551,
+      "ridge": 94.058
+    },
+    {
+      "id": 956123686,
+      "pointCount": 8308,
+      "eave": 91.319,
+      "ridge": 95.211
+    },
+    {
+      "id": 956123688,
+      "pointCount": 5078,
+      "eave": 91.091,
+      "ridge": 95.151
+    },
+    {
+      "id": 956123689,
+      "pointCount": 5947,
+      "eave": 90.633,
+      "ridge": 92.133
+    },
+    {
+      "id": 956123691,
+      "pointCount": 4154,
+      "eave": 88.233,
+      "ridge": 89.99
+    },
+    {
+      "id": 956123693,
+      "pointCount": 5686,
+      "eave": 89.61,
+      "ridge": 93.723
+    },
+    {
+      "id": 956123694,
+      "pointCount": 5285,
+      "eave": 88.46,
+      "ridge": 92.206
+    },
+    {
+      "id": 956123831,
+      "pointCount": 5982,
+      "eave": 85.718,
+      "ridge": 87.244
+    },
+    {
+      "id": 956123832,
+      "pointCount": 5598,
+      "eave": 87.929,
+      "ridge": 89.21
+    },
+    {
+      "id": 956123833,
+      "pointCount": 5920,
+      "eave": 89.485,
+      "ridge": 91.002
+    },
+    {
+      "id": 956123834,
+      "pointCount": 973,
+      "eave": 89.017,
+      "ridge": 90.121
+    },
+    {
+      "id": 956123877,
+      "pointCount": 6610,
+      "eave": 55.13,
+      "ridge": 56.194
+    },
+    {
+      "id": 956123878,
+      "pointCount": 4689,
+      "eave": 54.931,
+      "ridge": 56.028
+    },
+    {
+      "id": 956123883,
+      "pointCount": 5858,
+      "eave": 54.574,
+      "ridge": 55.852
+    },
+    {
+      "id": 956123884,
+      "pointCount": 946,
+      "eave": 55.312,
+      "ridge": 56.033
+    },
+    {
+      "id": 956123887,
+      "pointCount": 5927,
+      "eave": 54.621,
+      "ridge": 56.013
+    },
+    {
+      "id": 956123890,
+      "pointCount": 4639,
+      "eave": 54.676,
+      "ridge": 55.992
+    },
+    {
+      "id": 956123893,
+      "pointCount": 4285,
+      "eave": 54.696,
+      "ridge": 55.792
+    },
+    {
+      "id": 956123895,
+      "pointCount": 5787,
+      "eave": 54.506,
+      "ridge": 55.841
+    },
+    {
+      "id": 956123910,
+      "pointCount": 4361,
+      "eave": 55.153,
+      "ridge": 56.399
+    },
+    {
+      "id": 956123911,
+      "pointCount": 3924,
+      "eave": 55.677,
+      "ridge": 57.072
+    },
+    {
+      "id": 956123914,
+      "pointCount": 5291,
+      "eave": 56.431,
+      "ridge": 57.478
+    },
+    {
+      "id": 956123915,
+      "pointCount": 6618,
+      "eave": 55.173,
+      "ridge": 57.547
+    },
+    {
+      "id": 956123916,
+      "pointCount": 1953,
+      "eave": 55.658,
+      "ridge": 56.239
+    },
+    {
+      "id": 956123924,
+      "pointCount": 4681,
+      "eave": 55.686,
+      "ridge": 57.189
+    },
+    {
+      "id": 956123925,
+      "pointCount": 3764,
+      "eave": 55.363,
+      "ridge": 56.64
+    },
+    {
+      "id": 956123926,
+      "pointCount": 9351,
+      "eave": 55.208,
+      "ridge": 56.707
+    },
+    {
+      "id": 956123928,
+      "pointCount": 1197,
+      "eave": 55.206,
+      "ridge": 56.331
+    },
+    {
+      "id": 956123930,
+      "pointCount": 3433,
+      "eave": 54.618,
+      "ridge": 56.774
+    },
+    {
+      "id": 956123931,
+      "pointCount": 831,
+      "eave": 53.618,
+      "ridge": 54.768
+    },
+    {
+      "id": 956123932,
+      "pointCount": 3285,
+      "eave": 54.531,
+      "ridge": 56.204
+    },
+    {
+      "id": 956123933,
+      "pointCount": 4754,
+      "eave": 54.514,
+      "ridge": 57.163
+    },
+    {
+      "id": 956123934,
+      "pointCount": 4360,
+      "eave": 55.318,
+      "ridge": 58.99
+    },
+    {
+      "id": 956123935,
+      "pointCount": 4826,
+      "eave": 54.28,
+      "ridge": 56.705
+    },
+    {
+      "id": 956123938,
+      "pointCount": 577,
+      "eave": 54.391,
+      "ridge": 54.715
+    },
+    {
+      "id": 956123939,
+      "pointCount": 3293,
+      "eave": 54.107,
+      "ridge": 55.356
+    },
+    {
+      "id": 956123940,
+      "pointCount": 2343,
+      "eave": 54.001,
+      "ridge": 55.039
+    },
+    {
+      "id": 956123943,
+      "pointCount": 1395,
+      "eave": 54.391,
+      "ridge": 55.305
+    },
+    {
+      "id": 956123944,
+      "pointCount": 1333,
+      "eave": 54.47,
+      "ridge": 55.643
+    },
+    {
+      "id": 956123947,
+      "pointCount": 4400,
+      "eave": 54.187,
+      "ridge": 57.178
+    },
+    {
+      "id": 956123948,
+      "pointCount": 3535,
+      "eave": 54.106,
+      "ridge": 56.005
+    },
+    {
+      "id": 956123949,
+      "pointCount": 836,
+      "eave": 54.182,
+      "ridge": 55.123
+    },
+    {
+      "id": 956123951,
+      "pointCount": 1407,
+      "eave": 54.499,
+      "ridge": 55.634
+    },
+    {
+      "id": 956123952,
+      "pointCount": 3070,
+      "eave": 54.499,
+      "ridge": 55.585
+    },
+    {
+      "id": 956123953,
+      "pointCount": 4459,
+      "eave": 54.623,
+      "ridge": 57.775
+    },
+    {
+      "id": 956123955,
+      "pointCount": 2381,
+      "eave": 54.04,
+      "ridge": 55.136
+    },
+    {
+      "id": 956123956,
+      "pointCount": 5322,
+      "eave": 54.296,
+      "ridge": 56.138
+    },
+    {
+      "id": 956123957,
+      "pointCount": 3270,
+      "eave": 54.715,
+      "ridge": 56.982
+    },
+    {
+      "id": 956123958,
+      "pointCount": 1518,
+      "eave": 54.187,
+      "ridge": 56.091
+    },
+    {
+      "id": 956123959,
+      "pointCount": 6562,
+      "eave": 55.167,
+      "ridge": 56.349
+    },
+    {
+      "id": 956123960,
+      "pointCount": 5934,
+      "eave": 54.706,
+      "ridge": 56.025
+    },
+    {
+      "id": 956124023,
+      "pointCount": 3501,
+      "eave": 55.47,
+      "ridge": 56.282
+    },
+    {
+      "id": 956124101,
+      "pointCount": 1927,
+      "eave": 72.544,
+      "ridge": 74.232
+    },
+    {
+      "id": 956124102,
+      "pointCount": 1245,
+      "eave": 104.294,
+      "ridge": 104.647
+    },
+    {
+      "id": 956124104,
+      "pointCount": 5175,
+      "eave": 58.438,
+      "ridge": 59.604
+    },
+    {
+      "id": 956124120,
+      "pointCount": 603,
+      "eave": 82.655,
+      "ridge": 83.102
+    },
+    {
+      "id": 958330156,
+      "pointCount": 474,
+      "eave": 53.088,
+      "ridge": 53.461
+    },
+    {
+      "id": 958330157,
+      "pointCount": 4113,
+      "eave": 53.302,
+      "ridge": 54.378
+    },
+    {
+      "id": 958330158,
+      "pointCount": 392,
+      "eave": 53.405,
+      "ridge": 53.914
+    },
+    {
+      "id": 958330159,
+      "pointCount": 4738,
+      "eave": 53.659,
+      "ridge": 54.719
+    },
+    {
+      "id": 958330167,
+      "pointCount": 221,
+      "eave": 53.745,
+      "ridge": 54.253
+    },
+    {
+      "id": 958330215,
+      "pointCount": 3922,
+      "eave": 53.41,
+      "ridge": 54.724
+    },
+    {
+      "id": 958330282,
+      "pointCount": 2900,
+      "eave": 53.407,
+      "ridge": 54.265
+    },
+    {
+      "id": 958330284,
+      "pointCount": 4290,
+      "eave": 53.529,
+      "ridge": 54.394
+    },
+    {
+      "id": 958330285,
+      "pointCount": 3819,
+      "eave": 53.863,
+      "ridge": 54.682
+    },
+    {
+      "id": 958330286,
+      "pointCount": 3813,
+      "eave": 53.363,
+      "ridge": 54.557
+    },
+    {
+      "id": 958330316,
+      "pointCount": 232,
+      "eave": 53.88,
+      "ridge": 54.36
+    },
+    {
+      "id": 958330389,
+      "pointCount": 4316,
+      "eave": 54.294,
+      "ridge": 55.138
+    },
+    {
+      "id": 958330394,
+      "pointCount": 4431,
+      "eave": 54.181,
+      "ridge": 55.102
+    },
+    {
+      "id": 958330396,
+      "pointCount": 3237,
+      "eave": 54.067,
+      "ridge": 54.987
+    },
+    {
+      "id": 958330399,
+      "pointCount": 3551,
+      "eave": 54.065,
+      "ridge": 54.898
+    },
+    {
+      "id": 958330400,
+      "pointCount": 2981,
+      "eave": 53.946,
+      "ridge": 54.852
+    },
+    {
+      "id": 958330401,
+      "pointCount": 3307,
+      "eave": 53.995,
+      "ridge": 54.784
+    },
+    {
+      "id": 958330402,
+      "pointCount": 3133,
+      "eave": 53.82,
+      "ridge": 54.701
+    },
+    {
+      "id": 958330405,
+      "pointCount": 3121,
+      "eave": 53.877,
+      "ridge": 54.663
+    },
+    {
+      "id": 958330407,
+      "pointCount": 4137,
+      "eave": 53.859,
+      "ridge": 54.705
+    },
+    {
+      "id": 958330408,
+      "pointCount": 3763,
+      "eave": 53.556,
+      "ridge": 54.601
+    },
+    {
+      "id": 958330409,
+      "pointCount": 3259,
+      "eave": 53.632,
+      "ridge": 54.656
+    },
+    {
+      "id": 958330412,
+      "pointCount": 4858,
+      "eave": 53.607,
+      "ridge": 54.616
+    },
+    {
+      "id": 958330413,
+      "pointCount": 5092,
+      "eave": 53.621,
+      "ridge": 54.532
+    },
+    {
+      "id": 958330415,
+      "pointCount": 3152,
+      "eave": 54.599,
+      "ridge": 55.426
+    },
+    {
+      "id": 958330416,
+      "pointCount": 3950,
+      "eave": 54.532,
+      "ridge": 55.52
+    },
+    {
+      "id": 958330420,
+      "pointCount": 3490,
+      "eave": 54.444,
+      "ridge": 55.603
+    },
+    {
+      "id": 958330421,
+      "pointCount": 4020,
+      "eave": 54.859,
+      "ridge": 56.583
+    },
+    {
+      "id": 958330423,
+      "pointCount": 3854,
+      "eave": 55.069,
+      "ridge": 56.461
+    },
+    {
+      "id": 958330427,
+      "pointCount": 3033,
+      "eave": 54.861,
+      "ridge": 56.008
+    },
+    {
+      "id": 958330428,
+      "pointCount": 3231,
+      "eave": 55.244,
+      "ridge": 56.072
+    },
+    {
+      "id": 958330430,
+      "pointCount": 3791,
+      "eave": 55.037,
+      "ridge": 56.179
+    },
+    {
+      "id": 958330431,
+      "pointCount": 3613,
+      "eave": 55.236,
+      "ridge": 56.251
+    },
+    {
+      "id": 958330434,
+      "pointCount": 3980,
+      "eave": 55.382,
+      "ridge": 56.238
+    },
+    {
+      "id": 958330436,
+      "pointCount": 3121,
+      "eave": 55.243,
+      "ridge": 56.123
+    },
+    {
+      "id": 958330437,
+      "pointCount": 477,
+      "eave": 55.274,
+      "ridge": 55.897
+    },
+    {
+      "id": 958330563,
+      "pointCount": 4601,
+      "eave": 54.589,
+      "ridge": 55.339
+    },
+    {
+      "id": 958330564,
+      "pointCount": 3544,
+      "eave": 54.524,
+      "ridge": 55.34
+    },
+    {
+      "id": 958330565,
+      "pointCount": 4829,
+      "eave": 54.327,
+      "ridge": 55.479
+    },
+    {
+      "id": 958330569,
+      "pointCount": 5132,
+      "eave": 54.706,
+      "ridge": 55.604
+    },
+    {
+      "id": 958330571,
+      "pointCount": 6439,
+      "eave": 54.707,
+      "ridge": 55.583
+    },
+    {
+      "id": 958330572,
+      "pointCount": 6855,
+      "eave": 54.605,
+      "ridge": 55.629
+    },
+    {
+      "id": 958330573,
+      "pointCount": 5686,
+      "eave": 54.831,
+      "ridge": 55.701
+    },
+    {
+      "id": 958330574,
+      "pointCount": 4969,
+      "eave": 54.842,
+      "ridge": 55.683
+    },
+    {
+      "id": 958330575,
+      "pointCount": 6173,
+      "eave": 54.523,
+      "ridge": 55.732
+    },
+    {
+      "id": 958330578,
+      "pointCount": 5571,
+      "eave": 54.75,
+      "ridge": 55.733
+    },
+    {
+      "id": 958330579,
+      "pointCount": 242,
+      "eave": 54.069,
+      "ridge": 54.278
+    },
+    {
+      "id": 958330598,
+      "pointCount": 3587,
+      "eave": 53.714,
+      "ridge": 54.515
+    },
+    {
+      "id": 958330600,
+      "pointCount": 3072,
+      "eave": 53.57,
+      "ridge": 54.395
+    },
+    {
+      "id": 958330602,
+      "pointCount": 5826,
+      "eave": 53.567,
+      "ridge": 54.585
+    },
+    {
+      "id": 958330606,
+      "pointCount": 6546,
+      "eave": 53.968,
+      "ridge": 54.759
+    },
+    {
+      "id": 958330608,
+      "pointCount": 5596,
+      "eave": 53.787,
+      "ridge": 54.659
+    },
+    {
+      "id": 958330609,
+      "pointCount": 5950,
+      "eave": 53.934,
+      "ridge": 54.763
+    },
+    {
+      "id": 958330611,
+      "pointCount": 5031,
+      "eave": 53.926,
+      "ridge": 54.808
+    },
+    {
+      "id": 958330612,
+      "pointCount": 5859,
+      "eave": 53.735,
+      "ridge": 54.793
+    },
+    {
+      "id": 958330613,
+      "pointCount": 545,
+      "eave": 53.789,
+      "ridge": 54.818
+    },
+    {
+      "id": 958330758,
+      "pointCount": 5632,
+      "eave": 53.574,
+      "ridge": 54.654
+    },
+    {
+      "id": 958330759,
+      "pointCount": 5419,
+      "eave": 53.763,
+      "ridge": 54.568
+    },
+    {
+      "id": 958330771,
+      "pointCount": 366,
+      "eave": 53.051,
+      "ridge": 53.425
+    },
+    {
+      "id": 958331019,
+      "pointCount": 4405,
+      "eave": 53.578,
+      "ridge": 54.508
+    }
+  ]
+}
