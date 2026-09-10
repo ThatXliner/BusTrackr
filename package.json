@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "build": "node scripts/check-road-profiles.mjs && node scripts/check-local-scene.mjs && tsx scripts/check-road-contact.ts && tsc -b && vite build",
+    "build": "node scripts/check-road-profiles.mjs && node scripts/check-local-scene.mjs && tsx scripts/check-road-contact.ts && tsx scripts/check-building-surfaces.ts && tsc -b && vite build",
     "build:corridor": "node scripts/build-corridor.mjs",
     "preview": "vite preview --host 0.0.0.0",
     "build:local-footprints": "python3 scripts/build-local-footprints.py",

@@ -1,4 +1,5 @@
 import * as T from 'three';
+import {createBuildingShell,createPitchedRoof} from './building-shell';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 
 type Building={id:number;kind:string;height:number;heightSource?:string};
@@ -20,7 +21,7 @@ export async function createRoadsideBuildings(scene:T.Scene,height:(x:number,z:n
  const metal=new T.MeshStandardMaterial({color:'#a4a9a6',metalness:.42,roughness:.66});
  const palette=['#ede5d3','#cbd0c4','#d6c8ad','#d0cbc1','#e1d9c8'];
  const batches=new Map<string,{material:T.Material;geometries:T.BufferGeometry[];detail:boolean}>();const detailMeshes:T.Mesh[]=[];let chunk='',detail=false;
- const stats={pitchedRoofs:0,flatRoofs:0,detailedFacades:0,maximumRoofRise:0,terrainIntrusionIds:[] as number[],maximumGroundSpan:0,measuredRoofs:0,rejectedRoofProfiles:0};
+ const stats={pitchedRoofs:0,flatRoofs:0,detailedFacades:0,maximumRoofRise:0,terrainAdjustedIds:[] as number[],terrainIntrusionIds:[] as number[],maximumGroundSpan:0,measuredRoofs:0,rejectedRoofProfiles:0};
  function add(geometry:T.BufferGeometry,material:T.Material,color='#ffffff'){
   const g=geometry.index?geometry.toNonIndexed():geometry;if(g!==geometry)geometry.dispose();
   if((material as T.MeshStandardMaterial).vertexColors){const c=new T.Color(color),colors=new Float32Array(g.getAttribute('position').count*3);for(let i=0;i<colors.length;i+=3){colors[i]=c.r;colors[i+1]=c.g;colors[i+2]=c.b;}g.setAttribute('color',new T.BufferAttribute(colors,3));}
@@ -28,32 +29,31 @@ export async function createRoadsideBuildings(scene:T.Scene,height:(x:number,z:n
  }
  function box(p:T.Vector3,w:number,h:number,d:number,material:T.Material,yaw=0,color?:string){const g=new T.BoxGeometry(w,h,d),pos=g.getAttribute('position'),uv=g.getAttribute('uv'),normal=g.getAttribute('normal');for(let i=0;i<pos.count;i++){const u=Math.abs(normal.getX(i))>.5?pos.getZ(i):pos.getX(i),v=Math.abs(normal.getY(i))>.5?pos.getZ(i):pos.getY(i);uv.setXY(i,u/2,v/2);}g.rotateY(yaw);g.translate(p.x,p.y,p.z);add(g,material,color);}
  const areaOf=(ring:T.Vector2[])=>ring.reduce((sum,p,i)=>{const q=ring[(i+1)%ring.length];return sum+p.x*q.y-q.x*p.y;},0)/2;
- const segmentDistance=(p:T.Vector2,a:T.Vector2,b:T.Vector2)=>{const ab=b.clone().sub(a),t=T.MathUtils.clamp(p.clone().sub(a).dot(ab)/(ab.lengthSq()||1),0,1);return p.distanceTo(a.clone().addScaledVector(ab,t));};
  function build(building:Building,ring:T.Vector2[]){
   const area=Math.abs(areaOf(ring)),center=ring.reduce((p,q)=>p.add(q),new T.Vector2()).multiplyScalar(1/ring.length),roadPoint=nearestRoad(center),near=center.distanceTo(roadPoint)<48;
   chunk=`${Math.floor(center.x/180)},${Math.floor(center.y/180)}`;detail=false;
   const groundSamples=ring.map(p=>height(p.x,p.y)),base=Math.min(...groundSamples)-.22,caravan=building.kind==='static_caravan';
-  const sourceHeight=building.heightSource==='estimate'&&caravan?3.2:building.height;
+  const sourceHeight=building.height<1.5?2.8:building.heightSource==='estimate'&&caravan?3.2:building.height;
   const bounds=new T.Box2().setFromPoints(ring),size=bounds.getSize(new T.Vector2()),residential=caravan||building.kind==='house'||(area>=45&&area<310&&sourceHeight<8&&Math.max(size.x,size.y)<32);
   const levels=roofLevels.get(building.id),measured=levels&&Number.isFinite(levels.eave)&&Number.isFinite(levels.ridge)&&levels.ridge>=levels.eave&&levels.pointCount>=200&&levels.eave-base>=2&&levels.eave-base<=20&&levels.ridge-levels.eave<=4;
   if(measured)stats.measuredRoofs++;else if(levels)stats.rejectedRoofProfiles++;
   const pitched=residential&&area>25&&(!measured||levels.ridge-levels.eave>.25),wallColor=palette[Math.abs(building.id)%palette.length];
   let axis=ring[1].clone().sub(ring[0]);for(let i=1;i<ring.length;i++){const edge=ring[(i+1)%ring.length].clone().sub(ring[i]);if(edge.lengthSq()>axis.lengthSq())axis=edge;}axis.normalize();const perpendicular=new T.Vector2(-axis.y,axis.x);
   const widths=ring.map(p=>p.clone().sub(center).dot(perpendicular)),depth=Math.max(...widths)-Math.min(...widths);
-  const rise=pitched?(measured?levels.ridge-levels.eave:Math.min(caravan?.45:2.5,depth*.23,Math.max(0,sourceHeight-2.45))):0,eave=measured?levels.eave-base:sourceHeight-rise;
+  const rise=pitched?(measured?levels.ridge-levels.eave:Math.min(caravan?.45:2.5,depth*.23,Math.max(0,sourceHeight-2.45))):0,sourceEave=measured?levels.eave-base:sourceHeight-rise;
+  // A source height can be shorter than the local terrain span. Keep the roof
+  // above the uphill ground, while the existing foundation reaches the low side.
+  const eave=Math.max(sourceEave,Math.max(...groundSamples)-base+.25);
+  if(eave>sourceEave||building.height<1.5)stats.terrainAdjustedIds.push(building.id);
   stats.maximumGroundSpan=Math.max(stats.maximumGroundSpan,Math.max(...groundSamples)-Math.min(...groundSamples));if(Math.max(...groundSamples)>base+eave)stats.terrainIntrusionIds.push(building.id);
-  const shape=new T.Shape(ring.map(p=>new T.Vector2(p.x,-p.y))),shell=new T.ExtrudeGeometry(shape,{depth:eave,bevelEnabled:false,steps:1});shell.rotateX(-Math.PI/2);shell.translate(0,base,0);
+  const shape=new T.Shape(ring.map(p=>new T.Vector2(p.x,-p.y))),shell=createBuildingShell(shape,eave);shell.rotateX(-Math.PI/2);shell.translate(0,base,0);
   // Meter-scale wall UVs avoid stretching one patch of stucco over an entire facade.
   const shellPos=shell.getAttribute('position'),shellNormal=shell.getAttribute('normal'),shellUV=shell.getAttribute('uv');for(let i=0;i<shellPos.count;i++){const u=Math.abs(shellNormal.getX(i))>.5?shellPos.getZ(i):shellPos.getX(i);shellUV.setXY(i,u/2,(shellPos.getY(i)-base)/2);}add(shell,wall,wallColor);
   const cap=new T.ShapeGeometry(shape);cap.rotateX(-Math.PI/2);
   if(pitched){
-   const flat=cap.index?cap.toNonIndexed():cap,positions=flat.getAttribute('position'),triangles:T.Vector2[][]=[];
-   const subdivide=(a:T.Vector2,b:T.Vector2,c:T.Vector2,level=0)=>{const edges=[a.distanceToSquared(b),b.distanceToSquared(c),c.distanceToSquared(a)],longest=Math.max(...edges);if(longest<=6.25||level>=10){triangles.push([a,b,c]);return;}const edge=edges.indexOf(longest);if(edge===0){const m=a.clone().lerp(b,.5);subdivide(a,m,c,level+1);subdivide(m,b,c,level+1);}else if(edge===1){const m=b.clone().lerp(c,.5);subdivide(a,b,m,level+1);subdivide(a,m,c,level+1);}else{const m=c.clone().lerp(a,.5);subdivide(a,b,m,level+1);subdivide(m,b,c,level+1);}};
-   for(let i=0;i<positions.count;i+=3)subdivide(new T.Vector2(positions.getX(i),positions.getZ(i)),new T.Vector2(positions.getX(i+1),positions.getZ(i+1)),new T.Vector2(positions.getX(i+2),positions.getZ(i+2)));
-   const distance=(p:T.Vector2)=>Math.min(...ring.map((a,i)=>segmentDistance(p,a,ring[(i+1)%ring.length]))),maxDistance=Math.max(.1,...triangles.flatMap(t=>t.map(distance))),roofPositions:number[]=[],roofUV:number[]=[];
-   for(const triangle of triangles){const raised=triangle.map(p=>new T.Vector3(p.x,base+eave+rise*distance(p)/maxDistance,p.y));const normal=raised[1].clone().sub(raised[0]).cross(raised[2].clone().sub(raised[0]));const endFace=Math.abs(normal.x*axis.x+normal.z*axis.y)>Math.abs(normal.x*perpendicular.x+normal.z*perpendicular.y);for(let i=0;i<3;i++){roofPositions.push(...raised[i].toArray());const offset=triangle[i].clone().sub(center),u=offset.dot(axis),v=offset.dot(perpendicular);roofUV.push((endFace?v:u)/2.4,(endFace?u:v)/2.4);}}
-   stats.maximumRoofRise=Math.max(stats.maximumRoofRise,...roofPositions.filter((_,i)=>i%3===1).map(y=>y-base-eave));
-   const geometry=new T.BufferGeometry();geometry.setAttribute('position',new T.Float32BufferAttribute(roofPositions,3));geometry.setAttribute('uv',new T.Float32BufferAttribute(roofUV,2));geometry.computeVertexNormals();add(geometry,roof,building.id%3===0?'#c9c0ad':'#dddeda');if(flat!==cap)flat.dispose();cap.dispose();stats.pitchedRoofs++;
+   const geometry=createPitchedRoof(cap,ring,axis,center,base+eave,rise);
+   const roofPositions=geometry.getAttribute('position');for(let i=0;i<roofPositions.count;i++)stats.maximumRoofRise=Math.max(stats.maximumRoofRise,roofPositions.getY(i)-base-eave);
+   add(geometry,roof,building.id%3===0?'#c9c0ad':'#dddeda');stats.pitchedRoofs++;
   }else{cap.translate(0,base+eave+.02,0);add(cap,flatRoof);stats.flatRoofs++;}
   const orientation=Math.sign(areaOf(ring));
   const front=ring.reduce((best,a,i)=>{const b=ring[(i+1)%ring.length],mid=a.clone().lerp(b,.5),old=ring[best].clone().lerp(ring[(best+1)%ring.length],.5);return mid.distanceTo(roadPoint)<old.distanceTo(roadPoint)?i:best;},0);
