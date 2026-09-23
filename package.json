@@ -5,11 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "build": "node scripts/check-road-profiles.mjs && node scripts/check-local-scene.mjs && tsx scripts/check-road-contact.ts && tsx scripts/check-building-surfaces.ts && tsc -b && vite build",
+    "build": "node scripts/check-road-profiles.mjs && node scripts/check-local-scene.mjs && tsx scripts/check-road-contact.ts && tsx scripts/check-building-surfaces.ts && tsx scripts/check-modeled-terrain.ts && tsx scripts/check-parking-layout.ts && tsc -b && vite build",
     "build:corridor": "node scripts/build-corridor.mjs",
     "preview": "vite preview --host 0.0.0.0",
     "build:local-footprints": "python3 scripts/build-local-footprints.py",
-    "fetch:local-aerial": "python3 scripts/fetch-local-aerial.py && python3 scripts/fetch-local-aerial.py --campus"
+    "fetch:local-aerial": "python3 scripts/fetch-local-aerial.py && python3 scripts/fetch-local-aerial.py --campus",
+    "check:startup": "node scripts/check-startup.mjs",
+    "build:landscape": "node scripts/build-landscape.mjs"
   },
   "dependencies": {
     "@turf/buffer": "^7.4.0",
@@ -24,6 +26,9 @@
     "@types/react-dom": "^19.1.0",
     "@types/three": "^0.180.0",
     "@vitejs/plugin-react": "^5.0.0",
+    "playwright": "^1.63.0",
+    "polyclip-ts": "^0.16.8",
+    "sharp": "^0.35.4",
     "tsx": "^4.23.13",
     "typescript": "~5.8.3",
     "vite": "^7.1.0"

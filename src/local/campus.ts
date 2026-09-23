@@ -1,4 +1,5 @@
 import * as T from 'three';
+import {loadTexture} from './assets';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 
 type Geo={lon:number;lat:number};
@@ -14,10 +15,10 @@ export function createCampusRoofMaterial(){
 /** Authored landmarks, positioned from the OSM footprint and public-domain orthophoto.
  * Facade forms reference the school's campus gallery; dimensions remain approximate.
  */
-export async function buildCampus(scene:T.Scene,project:(p:Geo)=>T.Vector2,height:(x:number,z:number)=>number,roofMaterial:T.MeshStandardMaterial){
+export async function buildCampus(scene:T.Scene,project:(p:Geo)=>T.Vector2,height:(x:number,z:number)=>number,roofMaterial:T.MeshStandardMaterial,stoneMap?:T.Texture){
  const groups=new Map<T.Material,T.BufferGeometry[]>();
  const material=(color:string,roughness=.75,metalness=0)=>new T.MeshStandardMaterial({color,roughness,metalness});
- const stoneMap=await new T.TextureLoader().loadAsync(import.meta.env.BASE_URL+'local-scene/stone-albedo.png');stoneMap.colorSpace=T.SRGBColorSpace;stoneMap.wrapS=stoneMap.wrapT=T.RepeatWrapping;stoneMap.anisotropy=8;
+ stoneMap??=await loadTexture('local-scene/stone-albedo.webp');stoneMap.colorSpace=T.SRGBColorSpace;stoneMap.wrapS=stoneMap.wrapT=T.RepeatWrapping;stoneMap.anisotropy=8;
  const cream=material('#c9c1ab'),stone=new T.MeshStandardMaterial({map:stoneMap,bumpMap:stoneMap,bumpScale:.025,roughness:.91}),white=material('#deddd1',.42,.35),dark=material('#253641',.35,.55),blue=material('#477f9d'),concrete=material('#a9a895'),turf=material('#35462a');
 
  const add=(g:T.BufferGeometry,m:T.Material)=>{const list=groups.get(m)||[];list.push(g.index?g.toNonIndexed():g);groups.set(m,list);};

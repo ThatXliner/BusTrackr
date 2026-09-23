@@ -1,6 +1,6 @@
-# Local scene aerial image
+# Offline aerial reference
 
-`ground.jpg` is a downloaded public-domain NAIP aerial image. It is source imagery, not a photograph created by this project.
+`ground.jpg` is a downloaded public-domain NAIP aerial image. It is source imagery, not a photograph created by this project. The browser no longer requests this image or `campus.jpg`; the modeled landscape uses them only as offline placement references.
 
 - Service: https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPImagery/ImageServer
 - Retrieved: 2026-09-09T21:08:25+00:00

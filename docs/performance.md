@@ -230,3 +230,35 @@ The production preview under `/BusTrackr/` returned all 36 built files with HTTP
 `check-building-surfaces.ts` initially failed on two independent defects: a caravan wall shell contained two duplicate roof-level triangles, and its pitched roof had 20 shared vertices with inconsistent UV coordinates. The corrected shared generator removes only the extrusion's upper cap, retains walls/undersides, and uses continuous roof UVs. Convex/concave fixtures now pass cap ownership, footprint coverage, UV agreement and underside checks; the check is part of every build. A browser fixture uses the actual roadside builder (`roof-regression-before.png`, `roof-regression-after.png`), and the full route was inspected from an overhead orbit (`roof-fix-montery-overhead.png`).
 
 The same pass addresses six existing terrain/eave conflicts with documented inferred height adjustments, exposed as `terrainAdjustedIds`; `terrainIntrusionIds` is now empty for sampled corners. The source data is unchanged. Campus capture at 832×908, DPR1.4: 30-sample average30.0/minimum29.7FPS, 142draw calls, 509471triangles (`roof-fix-campus-performance.json`). Different camera state/culling prevents an isolated performance comparison. No new texture or rendering pass is added. All build/data/contact checks pass.
+
+## Startup loading fix — September 23, 2026
+
+The original first visible frame waited for serial texture downloads, building generation, the bus model, and a six-face local reflection bake. A cold desktop Chromium run at 1280×720 took 12,346 ms: assets/geometry through the bus took 3,114 ms, the reflection bake ended at 8,023 ms, and the first visible render ended at 12,346 ms. The screenshot's analytics-beacon errors are independent of this scene initialization path.
+
+Runtime textures now use WebP at their original 1254×1254 resolution (quality 85, alpha quality 100, effort 6). The four source PNGs remain for editing/provenance. Combined runtime texture bytes fall from 12,710,586 to 2,125,700, an 83.3% reduction. JSON, texture fetch/decode, and bus loading start concurrently. Fetches time out after 20 seconds and use the existing error/reconnect UI. Initial material programs compile asynchronously; the local reflection bake runs once on entry to Conservatory or quad, while other views use the existing shared environment.
+
+Observed local first-frame times after the change: 3,120 ms in the development build, 1,906 ms in the production preview in Chromium, and 3,163 ms in Firefox. Shader caches and hardware affect these numbers; these are individual desktop runs, not network/device percentiles or a guaranteed loading budget. The scene retains all 264 buildings and 602 trees.
+
+`npm run check:startup` is the regression check. It holds the ground texture request open and requires the bus and every detail texture to start anyway; the original code fails waiting for the bus. It also verifies first render, no initial reflection bake, lazy reflections in Conservatory, camera/bus navigation, pause, HTTP failure, and a stalled request reaching the retry UI. To run:
+
+```sh
+npx playwright install chromium firefox
+npm run build
+npm run preview -- --port 4174
+# In another terminal:
+npm run check:startup
+BROWSER=firefox npm run check:startup
+MOBILE=1 npm run check:startup
+```
+
+`HEADED=1` enables a visible browser; `STARTUP_URL` overrides the preview URL; `STARTUP_BUDGET_MS` enables a hardware-specific startup assertion. `BROWSER_EXECUTABLE` can select a locally installed compatible browser. `STARTUP_SCREENSHOT` saves the initial rendered scene. Phone-sized checks use a desktop GPU and do not replace physical-device profiling.
+
+## Modeled landscape — September 23, 2026
+
+The aerial-texture path has now been removed entirely. The app requests a 193 KB landscape asset instead of the 932 KB corridor image and 394 KB campus image. Vegetation placement is offline; no image download, pixel readback, or vegetation-color scan runs in the browser. Four compressed material-detail textures remain. Source/provenance and estimated dimensions are documented in `public/local-scene/landscape-source.md`.
+
+The runtime adds nine batched landscape materials for modeled roads, paths, parcels, lots, turf, soil and markings. The terrain uses an exact polygon boundary subdivided against the existing elevation triangles. `check-modeled-terrain.ts` verifies concave outlines, holes, upward winding and agreement with the road-contact height function. Grass clumps are instanced and limited to close camera views. The pool deck has an explicit opening around the existing level pool model.
+
+Final isolated Chromium desktop measurement (1280×720, DPR 1): first visible frame **2,073 ms**, ten one-second FPS samples averaging **30.0**, minimum **29.7**. Phone-sized ride-along (390×844 on the same desktop GPU): ten samples averaging **30.1**, minimum **29.7**, 84 draw calls / 713,028 triangles at the final sample. Paused frames stayed at 720 in successive checks. Earlier concurrent browser checks varied from 2.4 to 6.1 seconds at startup; shader caches and GPU contention still matter. These measurements are not physical-phone benchmarks or percentile guarantees.
+
+The startup regression now holds `grass-detail-albedo.webp` instead of the retired aerial request, and asserts that neither aerial JPG nor campus bounds is requested. It still exercises navigation, lazy reflections, pause, HTTP failure, and timeout/retry. The final scene retains 264 buildings, 602 trees, 74 parked cars, and adds 5,106 nearby grass clumps. Visual checks cover campus, sports, Fehren, full route, Conservatory, and phone-sized campus/ride-along views.

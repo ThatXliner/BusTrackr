@@ -1,4 +1,5 @@
 import * as T from 'three';
+import {PARKING_SURFACE_LIFT,type ParkingLayout} from './parking';
 import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 
@@ -6,7 +7,8 @@ type Pixel=readonly [number,number];
 /** Positions traced from the bundled 2048×1200 public-domain campus orthophoto.
  * Heights, fence construction, dugout details and parked vehicles are approximations.
  */
-export function buildGrounds(scene:T.Scene,project:(p:{lon:number;lat:number})=>T.Vector2,height:(x:number,z:number)=>number){
+export function buildGrounds(scene:T.Scene,project:(p:{lon:number;lat:number})=>T.Vector2,terrainHeight:(x:number,z:number)=>number,parking:ParkingLayout){
+ const height=(x:number,z:number)=>terrainHeight(x,z)+.12;
  const pixel=(p:Pixel)=>project({lon:-121.8294+p[0]/2048*.0078,lat:37.2774-p[1]/1200*.0036});
  const at=(p:Pixel,lift=0)=>{const v=pixel(p);return new T.Vector3(v.x,height(v.x,v.y)+lift,v.y);};
  const batches=new Map<T.Material,T.BufferGeometry[]>();
@@ -44,7 +46,7 @@ export function buildGrounds(scene:T.Scene,project:(p:{lon:number;lat:number})=>
  fence([[438,234],[472,249],[484,270],[477,296]],6,false);
  fence([[1362,662],[1525,662],[1524,828],[1505,850],[1320,846],[1306,825],[1330,737]],2.5,true,true);
  fence([[1518,789],[1533,819],[1523,850],[1484,857]],5,false);
- // Dugout shelters remain deliberately small and low; they do not replace the aerial field surface.
+ // Dugout shelters remain deliberately small and low; the field surfaces are modeled separately in landscape.ts.
  function dugout(a:Pixel,b:Pixel){
   const p=at(a),q=at(b),center=p.clone().add(q).multiplyScalar(.5),length=p.distanceTo(q),yaw=Math.atan2(q.x-p.x,q.z-p.z),normal=new T.Vector3(Math.cos(yaw),0,-Math.sin(yaw));
   box(center.clone().add(new T.Vector3(0,.06,0)),2.7,.12,length+1,concrete,yaw);
@@ -65,18 +67,23 @@ export function buildGrounds(scene:T.Scene,project:(p:{lon:number;lat:number})=>
   beam(stadiumPoint(side*55.3,3.05,-2.82),stadiumPoint(side*55.3,3.05,2.82),.075,yellow);
   for(const z of [-2.82,2.82])beam(stadiumPoint(side*55.3,3.05,z),stadiumPoint(side*55.3,9.2,z),.065,yellow);
  }
+ // Modeled practice-field goals replace the tiny goal marks in the old photo.
+ for(const [center,side] of [[[1576,767],-1],[[1877,764],1]] as [Pixel,number][]){
+  const p=at(center),goalPoint=(x:number,y:number,z:number)=>p.clone().add(new T.Vector3(x*side,y,z));
+  for(const z of [-3.66,3.66]){
+   beam(goalPoint(0,0,z),goalPoint(0,2.44,z),.055,white);
+   beam(goalPoint(0,2.44,z),goalPoint(2,0,z),.04,white);
+   beam(goalPoint(0,.04,z),goalPoint(2,.04,z),.035,white);
+  }
+  beam(goalPoint(0,2.44,-3.66),goalPoint(0,2.44,3.66),.055,white);
+  beam(goalPoint(2,.04,-3.66),goalPoint(2,.04,3.66),.035,white);
+  const net=new T.BufferGeometry();net.setAttribute('position',new T.Float32BufferAttribute([...goalPoint(0,2.44,-3.66).toArray(),...goalPoint(0,2.44,3.66).toArray(),...goalPoint(2,.04,-3.66).toArray(),...goalPoint(2,.04,3.66).toArray()],3));net.setAttribute('uv',new T.Float32BufferAttribute([0,0,18,0,0,7,18,7],2));net.setIndex([0,1,2,1,3,2]);net.computeVertexNormals();add(net,meshMaterial);
+ }
  for(const [material,parts] of batches){const geometry=mergeGeometries(parts,false)!;const mesh=new T.Mesh(geometry,material);mesh.castShadow=material!==meshMaterial;mesh.receiveShadow=true;scene.add(mesh);parts.forEach(p=>p.dispose());}
 
  // Authored parked sedans: one instanced draw per material, with shared geometry and varied paint.
- const cars:{position:T.Vector3;yaw:number}[]=[];
- function parkingRow(start:Pixel,end:Pixel,spacing:number,side:number){
-  const a=pixel(start),b=pixel(end),count=Math.floor(a.distanceTo(b)/spacing),along=b.clone().sub(a).normalize(),yaw=Math.atan2(along.x,along.y)+side*Math.PI/2;
-  for(let i=0;i<=count;i++){if(i%9===4)continue;const p=a.clone().lerp(b,i/count);cars.push({position:new T.Vector3(p.x,height(p.x,p.y)+.04,p.y),yaw});}
- }
- parkingRow([877,586],[1092,628],2.8,1);
- parkingRow([965,634],[1116,669],2.8,-1);
- parkingRow([1183,670],[1138,788],2.8,1);
- parkingRow([1537,884],[1715,891],2.9,-1);
+ // Tire bottoms are 0.04 m above the model origin. Seat them on the actual asphalt.
+ const cars=parking.bays.filter(bay=>bay.occupied).map(bay=>({position:new T.Vector3(bay.center.x,terrainHeight(bay.center.x,bay.center.y)+PARKING_SURFACE_LIFT-.04,bay.center.y),yaw:bay.yaw}));
  const paint=new T.MeshStandardMaterial({color:'#ffffff',metalness:.48,roughness:.3});
  const windows=new T.MeshStandardMaterial({color:'#283e49',metalness:.65,roughness:.16});
  const rubber=new T.MeshStandardMaterial({color:'#222525',roughness:.95});

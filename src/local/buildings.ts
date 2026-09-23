@@ -1,12 +1,13 @@
 import * as T from 'three';
+import {loadTexture} from './assets';
 import {createBuildingShell,createPitchedRoof} from './building-shell';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 
 type Building={id:number;kind:string;height:number;heightSource?:string};
 export type RoofLevels={id:number;pointCount:number;eave:number;ridge:number};
 /** Footprint-based roadside architecture. Roof style and facade openings are inferred. */
-export async function createRoadsideBuildings(scene:T.Scene,height:(x:number,z:number)=>number,nearestRoad:(p:T.Vector2)=>T.Vector2,roofLevels:Map<number,RoofLevels>=new Map()){
- const shingles=await new T.TextureLoader().loadAsync(import.meta.env.BASE_URL+'local-scene/shingles-albedo.png');shingles.colorSpace=T.SRGBColorSpace;shingles.wrapS=shingles.wrapT=T.RepeatWrapping;shingles.anisotropy=8;
+export async function createRoadsideBuildings(scene:T.Scene,height:(x:number,z:number)=>number,nearestRoad:(p:T.Vector2)=>T.Vector2,roofLevels:Map<number,RoofLevels>=new Map(),shingles?:T.Texture){
+ shingles??=await loadTexture('local-scene/shingles-albedo.webp');shingles.colorSpace=T.SRGBColorSpace;shingles.wrapS=shingles.wrapT=T.RepeatWrapping;shingles.anisotropy=8;
  const canvas=document.createElement('canvas');canvas.width=canvas.height=256;const context=canvas.getContext('2d')!,pixels=context.createImageData(256,256);let seed=24139;
  const random=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};
  for(let i=0;i<pixels.data.length;i+=4){const v=218+(random()-.5)*28;pixels.data[i]=v;pixels.data[i+1]=v;pixels.data[i+2]=v;pixels.data[i+3]=255;}context.putImageData(pixels,0,0);

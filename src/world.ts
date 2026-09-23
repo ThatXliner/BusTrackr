@@ -1,8 +1,13 @@
 import * as T from 'three';
+import {fetchAsset,loadTexture} from './local/assets';
 import {createBuildingShell} from './local/building-shell';
 import {buildCampus,createCampusRoofMaterial} from './local/campus';
 import {createRoadsideBuildings,type RoofLevels} from './local/buildings';
 import {buildGrounds} from './local/grounds';
+import {createParkingLayout} from './local/parking';
+import {addMeadow} from './local/meadow';
+import {createModeledTerrain} from './local/modeled-terrain';
+import {buildLandscape,type LandscapeData} from './local/landscape';
 import {buildRoads,roadNormal,laneOffset,roundRoadPath,type RoadProfile} from './local/roads';
 import {addVegetation} from './local/vegetation';
 import {buildStreetDetails} from './local/street-details';
@@ -30,71 +35,58 @@ function groundHeight(d:DEM,x:number,z:number){const p=geo(x,z),xx=T.MathUtils.c
 let seed=84129;
 function random(){seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;}
 function noiseTexture(color:number[],size=128){const c=document.createElement('canvas');c.width=c.height=size;const ctx=c.getContext('2d')!,data=ctx.createImageData(size,size);for(let i=0;i<data.data.length;i+=4){const n=(random()-.5)*24;for(let k=0;k<3;k++)data.data[i+k]=color[k]+n;data.data[i+3]=255;}ctx.putImageData(data,0,0);const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;t.wrapS=t.wrapT=T.RepeatWrapping;t.repeat.set(3,3);return t;}
-function foliageTexture(){const c=document.createElement('canvas');c.width=c.height=256;const ctx=c.getContext('2d')!;for(let i=0;i<5600;i++){const angle=random()*Math.PI*2,r=Math.sqrt(random()),x=128+Math.cos(angle)*r*108,y=129+Math.sin(angle)*r*111;const edge=1-r;if(random()>edge*4+.1)continue;const v=random();ctx.fillStyle=`rgb(${Math.round(36+v*54)},${Math.round(56+v*61)},${Math.round(22+v*28)})`;ctx.beginPath();ctx.ellipse(x,y,1+random()*4,1+random()*2,random()*Math.PI,0,Math.PI*2);ctx.fill();}const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;return t;}
+
 
 function labelTexture(text:string){const c=document.createElement('canvas');c.width=512;c.height=80;const ctx=c.getContext('2d')!;ctx.fillStyle='#14242ddd';ctx.beginPath();ctx.roundRect(0,0,512,80,14);ctx.fill();ctx.font='600 42px system-ui';ctx.textAlign='center';ctx.fillStyle='#f3f2e7';ctx.fillText(text,256,55);const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;return t;}
 
 export async function createWorld(host:HTMLDivElement,onTick:(s:Snapshot)=>void,onError:(s:string)=>void){
  const startupAt=performance.now();let worldFirstRenderMs:number|null=null;
  seed=84129;
- const read=async(path:string)=>{const r=await fetch(BASE+path);if(!r.ok)throw Error(`Local asset missing: ${path}. Run the local-scene asset scripts.`);return r.json();};
- const [routes,dem,footprints,bounds,corridor,roadProfiles,roofData]=await Promise.all([read('data/routes.json'),read('local-scene/elevation.json'),read('local-scene/footprints.json'),read('local-scene/ground-bounds.json'),read('data/corridor.json'),read('local-scene/road-profiles.json'),read('local-scene/roadside-roofs.json')]) as [{inbound:Geo[];outbound:Geo[]},DEM,{buildings:Building[];exclusions:number[][][]},any,number[][][],{inbound:RoadProfile[];outbound:RoadProfile[]},{profiles:RoofLevels[]}];
+ const startupStages:Record<string,number>={};const mark=(name:string)=>{startupStages[name]=Math.round(performance.now()-startupAt);};
+ const read=async(path:string)=>(await fetchAsset(path)).json();
+ const [data,textures,busGLTF]=await Promise.all([
+  Promise.all([read('data/routes.json'),read('local-scene/elevation.json'),read('local-scene/footprints.json'),read('local-scene/ground-bounds.json'),read('data/corridor.json'),read('local-scene/road-profiles.json'),read('local-scene/roadside-roofs.json'),read('local-scene/landscape.json')]),
+  Promise.all(['grass-detail-albedo.webp','shingles-albedo.webp','stone-albedo.webp','broadleaf-albedo.webp'].map(name=>loadTexture('local-scene/'+name))),
+  fetchAsset('models/valley-bus.glb').then(r=>r.arrayBuffer()).then(buffer=>new GLTFLoader().parseAsync(buffer,BASE+'models/')),
+ ]);
+ const [routes,dem,footprints,bounds,corridor,roadProfiles,roofData,landscapeData]=data as [{inbound:Geo[];outbound:Geo[]},DEM,{buildings:Building[];exclusions:number[][][]},any,number[][][],{inbound:RoadProfile[];outbound:RoadProfile[]},{profiles:RoofLevels[]},LandscapeData];
+ const [grassDetail,shingles,stoneMap,branchMap]=textures;
+ mark('assets');
  const extent=bounds.extent||bounds;
  const mobile=()=>host.clientWidth<650;
  const renderer=new T.WebGLRenderer({antialias:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,mobile()?1:1.4));renderer.setSize(host.clientWidth,host.clientHeight);renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.08;renderer.shadowMap.enabled=true;renderer.shadowMap.type=T.PCFSoftShadowMap;host.appendChild(renderer.domElement);
  const scene=new T.Scene(),daylight=createDaylightBackdrop(),overviewBackground=new T.Color('#152631');scene.background=daylight;const atmosphere=new T.Fog('#d9e1db',3500,8500);scene.fog=atmosphere;
- const camera=new T.PerspectiveCamera(42,host.clientWidth/host.clientHeight,.3,12000);
+ const camera=new T.PerspectiveCamera(42,host.clientWidth/host.clientHeight,1,12000);
  const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.dampingFactor=.1;controls.maxPolarAngle=Math.PI*.485;controls.minDistance=12;controls.maxDistance=9000;controls.enablePan=true;controls.screenSpacePanning=false;controls.mouseButtons={LEFT:T.MOUSE.PAN,MIDDLE:T.MOUSE.DOLLY,RIGHT:T.MOUSE.ROTATE};controls.touches={ONE:T.TOUCH.PAN,TWO:T.TOUCH.DOLLY_ROTATE};
  const pmrem=new T.PMREMGenerator(renderer),room=new RoomEnvironment(),environment=pmrem.fromScene(room,.04);scene.environment=environment.texture;scene.environmentIntensity=.5;pmrem.dispose();room.dispose();
  scene.add(new T.HemisphereLight('#dbeaf4','#6f6751',.9));
  const sun=new T.DirectionalLight('#fff0d4',2.8);sun.castShadow=true;sun.shadow.mapSize.set(mobile()?1024:2048,mobile()?1024:2048);sun.shadow.normalBias=.15;sun.shadow.bias=-.00015;sun.shadow.camera.left=-270;sun.shadow.camera.right=270;sun.shadow.camera.top=270;sun.shadow.camera.bottom=-270;sun.shadow.camera.near=10;sun.shadow.camera.far=1400;scene.add(sun,sun.target);
- const terrainTexture=await new T.TextureLoader().loadAsync(BASE+'local-scene/ground.jpg');terrainTexture.colorSpace=T.SRGBColorSpace;terrainTexture.anisotropy=Math.min(renderer.capabilities.getMaxAnisotropy(),8);
- const aerialCanvas=document.createElement('canvas');aerialCanvas.width=terrainTexture.image.width;aerialCanvas.height=terrainTexture.image.height;const actx=aerialCanvas.getContext('2d',{willReadFrequently:true})!;actx.drawImage(terrainTexture.image,0,0);const aerialPixels=actx.getImageData(0,0,aerialCanvas.width,aerialCanvas.height).data;
- if(mobile()){const small=document.createElement('canvas');small.width=2048;small.height=Math.round(2048*aerialCanvas.height/aerialCanvas.width);small.getContext('2d')!.drawImage(aerialCanvas,0,0,small.width,small.height);terrainTexture.image=small;terrainTexture.needsUpdate=true;}
- const uv=(x:number,z:number)=>{const p=geo(x,z);return [(p.lon-extent.xmin)/(extent.xmax-extent.xmin),(p.lat-extent.ymin)/(extent.ymax-extent.ymin)];};
+ mark('renderer');
  const rings=corridor.map(r=>r.map(p=>local({lon:p[0],lat:p[1]})));
  const campusRing=[[-121.8291,37.2768],[-121.828,37.2772],[-121.8243,37.2770],[-121.8218,37.2757],[-121.8222,37.2740],[-121.825,37.2741],[-121.8288,37.2752]].map(p=>local({lon:p[0],lat:p[1]}));rings.push(campusRing);
  const ringBoxes=rings.map(r=>new T.Box2().setFromPoints(r));
  const inside=(x:number,z:number)=>rings.some((r,i)=>x>=ringBoxes[i].min.x&&x<=ringBoxes[i].max.x&&z>=ringBoxes[i].min.y&&z<=ringBoxes[i].max.y&&inRing(x,z,r));
  const min=local({lon:extent.xmin,lat:extent.ymax}),max=local({lon:extent.xmax,lat:extent.ymin});
- const nx=300,nz=256,pos:number[]=[],uvs:number[]=[],indices:number[]=[],valid:boolean[]=[];
- for(let j=0;j<=nz;j++)for(let i=0;i<=nx;i++){const x=T.MathUtils.lerp(min.x,max.x,i/nx),z=T.MathUtils.lerp(min.y,max.y,j/nz);pos.push(x,groundHeight(dem,x,z),z);uvs.push(...uv(x,z));valid.push(inside(x,z));}
+ const nx=300,nz=256,pos:number[]=[];
+ for(let j=0;j<=nz;j++)for(let i=0;i<=nx;i++){const x=T.MathUtils.lerp(min.x,max.x,i/nx),z=T.MathUtils.lerp(min.y,max.y,j/nz);pos.push(x,groundHeight(dem,x,z),z);}
  // Roads must follow the triangles actually rendered, not a separate DEM interpolation.
  const surfaceHeight=(x:number,z:number)=>{const gx=T.MathUtils.clamp((x-min.x)/(max.x-min.x)*nx,0,nx-.000001),gz=T.MathUtils.clamp((z-min.y)/(max.y-min.y)*nz,0,nz-.000001),ix=Math.floor(gx),iz=Math.floor(gz),fx=gx-ix,fz=gz-iz,a=iz*(nx+1)+ix,y=(index:number)=>pos[index*3+1];return fx+fz<=1?y(a)+(y(a+1)-y(a))*fx+(y(a+nx+1)-y(a))*fz:y(a+nx+2)+(y(a+nx+1)-y(a+nx+2))*(1-fx)+(y(a+1)-y(a+nx+2))*(1-fz);};
- for(let j=0;j<nz;j++)for(let i=0;i<nx;i++){const a=j*(nx+1)+i,b=a+1,c=a+nx+1,d=c+1;if(valid[a]&&valid[b]&&valid[c])indices.push(a,c,b);if(valid[b]&&valid[c]&&valid[d])indices.push(b,c,d);}
- const groundGeo=new T.BufferGeometry();groundGeo.setAttribute('position',new T.Float32BufferAttribute(pos,3));groundGeo.setAttribute('uv',new T.Float32BufferAttribute(uvs,2));groundGeo.setIndex(indices);groundGeo.computeVertexNormals();
- const grassDetail=await new T.TextureLoader().loadAsync(BASE+'local-scene/grass-detail-albedo.png');grassDetail.colorSpace=T.SRGBColorSpace;grassDetail.wrapS=grassDetail.wrapT=T.RepeatWrapping;grassDetail.anisotropy=Math.min(renderer.capabilities.getMaxAnisotropy(),8);
- const groundMat=new T.MeshStandardMaterial({map:terrainTexture,bumpMap:grassDetail,bumpScale:.008,roughness:1,metalness:0});const terrain=new T.Mesh(groundGeo,groundMat);terrain.receiveShadow=true;scene.add(terrain);
- // A higher-resolution local campus photograph replaces the coarse corridor texture near campus.
- const campusBounds=await read('local-scene/campus-bounds.json');const cb=campusBounds.extent||campusBounds;
- const campusTexture=await new T.TextureLoader().loadAsync(BASE+'local-scene/campus.jpg');campusTexture.colorSpace=T.SRGBColorSpace;campusTexture.anisotropy=8;
- const campusMin=local({lon:cb.xmin,lat:cb.ymax}),campusMax=local({lon:cb.xmax,lat:cb.ymin});
- const groundDetailEnabled={value:1};
- groundMat.onBeforeCompile=shader=>{shader.uniforms.groundDetailEnabled=groundDetailEnabled;shader.uniforms.groundDetail={value:grassDetail};shader.uniforms.campusMap={value:campusTexture};shader.uniforms.campusRect={value:new T.Vector4(campusMin.x,campusMin.y,campusMax.x-campusMin.x,campusMax.y-campusMin.y)};
-  shader.vertexShader='varying vec2 vCampusUv; varying vec2 vGroundDetailUv; uniform vec4 campusRect;\n'+shader.vertexShader;
-  shader.vertexShader=shader.vertexShader.replace('#include <uv_vertex>','#include <uv_vertex>\nvGroundDetailUv = position.xz / 2.8;\nvBumpMapUv = vGroundDetailUv;');
-  shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\nvCampusUv = (position.xz-campusRect.xy)/campusRect.zw; vCampusUv.y=1.0-vCampusUv.y;');
-  shader.fragmentShader='varying vec2 vCampusUv; varying vec2 vGroundDetailUv; uniform sampler2D campusMap; uniform sampler2D groundDetail; uniform float groundDetailEnabled; float groundDetailWeight=0.0;\n'+shader.fragmentShader;
-  shader.fragmentShader=shader.fragmentShader.replace('#include <normal_fragment_maps>','if (groundDetailEnabled > 0.5) {\n'+T.ShaderChunk.normal_fragment_maps.replace('dHdxy_fwd()', 'dHdxy_fwd() * groundDetailWeight')+'\n}');
-  shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',`#ifdef USE_MAP
-   vec4 sampledDiffuseColor=texture2D(map,vMapUv);
-   vec2 edge=min(vCampusUv,1.0-vCampusUv);
-   float mask=smoothstep(0.0,0.025,min(edge.x,edge.y));
-   sampledDiffuseColor=mix(sampledDiffuseColor,texture2D(campusMap,clamp(vCampusUv,0.0,1.0)),mask);
-   // Preserve aerial color/layout; add near-field structure only to warm/green terrain.
-   vec3 aerial=sampledDiffuseColor.rgb;
-   float warmGreen=(max(aerial.r,aerial.g)-aerial.b)/max(max(aerial.r,aerial.g),0.04);
-   float naturalSurface=smoothstep(0.1,0.3,warmGreen);
-   groundDetailWeight=naturalSurface*(1.0-smoothstep(80.0,280.0,length(vViewPosition)));
-   if (groundDetailEnabled > 0.5) {
-   vec3 detail=texture2D(groundDetail,vGroundDetailUv).rgb;
-   float grain=clamp(dot(detail,vec3(0.2126,0.7152,0.0722))/0.25125,0.35,2.0);
-   sampledDiffuseColor.rgb*=mix(1.0,grain,groundDetailWeight*0.55);
-   }
-   diffuseColor*=sampledDiffuseColor;
-  #endif`);
- };
- groundMat.customProgramCacheKey=()=> 'campus-aerial-ground-detail-v2';
+ const terrainGrid={minX:min.x,minZ:min.y,stepX:(max.x-min.x)/nx,stepZ:(max.y-min.y)/nz,columns:nx,rows:nz};
+ const groundGeo=createModeledTerrain(landscapeData.boundary,terrainGrid,surfaceHeight);
+ grassDetail.colorSpace=T.SRGBColorSpace;grassDetail.wrapS=grassDetail.wrapT=T.RepeatWrapping;grassDetail.anisotropy=Math.min(renderer.capabilities.getMaxAnisotropy(),8);
+ // Meter-scaled grass/thatch material on measured geometry. No geographic image
+ // contributes color, baked shadows, roof detail, or tree positions at runtime.
+ const groundMat=new T.MeshStandardMaterial({map:grassDetail,bumpMap:grassDetail,bumpScale:.025,vertexColors:true,roughness:1});
+ groundMat.onBeforeCompile=shader=>{shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',`#ifdef USE_MAP
+  vec4 detailA=texture2D(map, vMapUv);
+  vec4 detailB=texture2D(map, mat2(0.8,-0.6,0.6,0.8)*vMapUv*0.37+vec2(0.23,0.67));
+  diffuseColor*=mix(detailA,detailB,0.48);
+ #endif`);};
+ groundMat.customProgramCacheKey=()=> 'modeled-meadow-v1';
+ const terrain=new T.Mesh(groundGeo,groundMat);terrain.receiveShadow=true;scene.add(terrain);
+ const parking=createParkingLayout(local,landscapeData.roads);
+ const landscape=buildLandscape(scene,surfaceHeight,terrainGrid,inside,landscapeData,local,parking);
+ mark('terrain');
  const wallTex=noiseTexture([180,170,146]);const wallMat=new T.MeshStandardMaterial({map:wallTex,bumpMap:wallTex,bumpScale:.025,roughness:.88,side:T.DoubleSide});
  const trimMat=new T.MeshStandardMaterial({color:'#d8d6c8',roughness:.7});const glassMat=new T.MeshPhysicalMaterial({color:'#547587',metalness:.62,roughness:.16,clearcoat:1,envMapIntensity:1.7});
  const shadedGlass=glassMat.clone();shadedGlass.color.set('#2a4658');shadedGlass.roughness=.23;
@@ -108,7 +100,7 @@ export async function createWorld(host:HTMLDivElement,onTick:(s:Snapshot)=>void,
  const buildingRings:T.Vector2[][]=[];
  const buildingRouteLines=[routes.inbound,routes.outbound].map(r=>r.map(local));
  const nearestRoad=(p:T.Vector2)=>{let best=new T.Vector2(),distance=Infinity;for(const line of buildingRouteLines)for(let i=1;i<line.length;i++){const a=line[i-1],delta=line[i].clone().sub(a),t=T.MathUtils.clamp(p.clone().sub(a).dot(delta)/(delta.lengthSq()||1),0,1),candidate=a.clone().addScaledVector(delta,t),d=candidate.distanceToSquared(p);if(d<distance){distance=d;best=candidate;}}return best;};
- const roadside=await createRoadsideBuildings(scene,surfaceHeight,nearestRoad,new Map(roofData.profiles.map(p=>[p.id,p])));
+ const roadside=await createRoadsideBuildings(scene,surfaceHeight,nearestRoad,new Map(roofData.profiles.map(p=>[p.id,p])),shingles);
 
  // Architectural envelopes replace the rejected noisy lidar surface mesh.
  // Elevations are calibrated against that data; forms follow the campus orthophoto.
@@ -157,19 +149,15 @@ export async function createWorld(host:HTMLDivElement,onTick:(s:Snapshot)=>void,
 
  }
  for(const [material,list] of batches){if(!list.length)continue;const merged=mergeGeometries(list,false)!;const mesh=new T.Mesh(merged,material);mesh.castShadow=!campusGlass.includes(material as T.MeshPhysicalMaterial);mesh.receiveShadow=true;scene.add(mesh);list.forEach(g=>g.dispose());}
+ mark('buildings');
  const roadsideStats=roadside.finish();
- await buildCampus(scene,local,(x,z)=>groundHeight(dem,x,z),campusRoofMat);
- const grounds=buildGrounds(scene,local,(x,z)=>groundHeight(dem,x,z));
- // Vegetation is generated from dark-green areas in the public-domain image, excluding buildings and fields.
- const exclusions=footprints.exclusions.map(r=>r.map(p=>local({lon:p[0],lat:p[1]})));
- // Keep the paved quad clear; dark aerial shadows otherwise become tall trees.
- exclusions.push([[830,417],[967,430],[962,524],[818,504]].map(([x,y])=>local({lon:-121.8294+x/2048*.0078,lat:37.2774-y/1200*.0036})));
- const treePositions:{x:number;z:number;y:number;h:number}[]=[];
+ await buildCampus(scene,local,(x,z)=>groundHeight(dem,x,z),campusRoofMat,stoneMap);
+ const grounds=buildGrounds(scene,local,surfaceHeight,parking);
+ const meadow=addMeadow(scene,surfaceHeight,landscape.naturalAt,buildingRings,min,max);
+ const treePositions=landscapeData.trees.map(([x,z,h])=>({x,z,h,y:surfaceHeight(x,z)}));
  const routeLines=buildingRouteLines;
- const nearRoad=(p:T.Vector2)=>routeLines.some((r,index)=>r.some((a,i)=>i>0&&distanceSegment(p,r[i-1],a)<(index===0?roadProfiles.inbound:roadProfiles.outbound)[i-1].width/2+1.5));
- for(let z=min.y;z<max.y;z+=9)for(let x=min.x;x<max.x;x+=9){const xx=x+random()*5,zz=z+random()*5;if(!inside(xx,zz))continue;const [u,v]=uv(xx,zz),ix=Math.floor(u*aerialCanvas.width),iy=Math.floor((1-v)*aerialCanvas.height),n=(iy*aerialCanvas.width+ix)*4,r=aerialPixels[n],g=aerialPixels[n+1],b=aerialPixels[n+2];if(!(g>r*1.08&&g>b*1.1&&r+g+b<310))continue;if(buildingRings.some(poly=>inRing(xx,zz,poly))||exclusions.some(poly=>inRing(xx,zz,poly))||nearRoad(new T.Vector2(xx,zz)))continue;treePositions.push({x:xx,z:zz,y:groundHeight(dem,xx,zz),h:5+random()*6});}
- const branchMap=await new T.TextureLoader().loadAsync(BASE+'local-scene/broadleaf-albedo.png');branchMap.colorSpace=T.SRGBColorSpace;branchMap.anisotropy=Math.min(renderer.capabilities.getMaxAnisotropy(),4);
- const oldCrown=foliageTexture();oldCrown.dispose(); // Preserve the established scenery random sequence.
+ mark('campus');
+ branchMap.colorSpace=T.SRGBColorSpace;branchMap.anisotropy=Math.min(renderer.capabilities.getMaxAnisotropy(),4);
  const vegetation=addVegetation(scene,treePositions,random,branchMap,renderer);
  const paths=routeLines.map((rawPoints,index)=>{const {points,profiles}=roundRoadPath(rawPoints,index===0?roadProfiles.inbound:roadProfiles.outbound);const lengths=[0];for(let i=1;i<points.length;i++)lengths.push(lengths[i-1]+points[i].distanceTo(points[i-1]));return {points,normals:points.map((_,i)=>roadNormal(points,i)),profiles,lengths,length:lengths.at(-1)!};});
  function at(path:typeof paths[number],t:number){
@@ -183,12 +171,29 @@ export async function createWorld(host:HTMLDivElement,onTick:(s:Snapshot)=>void,
  const roadStats=buildRoads(scene,paths,surfaceHeight,{minX:min.x,minZ:min.y,stepX:(max.x-min.x)/nx,stepZ:(max.y-min.y)/nz,columns:nx,rows:nz});
  const streetDetails=buildStreetDetails(scene,paths,surfaceHeight);
  const routeObjects=paths.map((path,i)=>{const geometry=new LineGeometry().setPositions(path.points.flatMap(p=>[p.x,groundHeight(dem,p.x,p.y)+.3,p.y]));const line=new Line2(geometry,new LineMaterial({color:i===0?'#68e7cf':'#efc76d',linewidth:2.5,transparent:true,opacity:.9,depthWrite:false,depthTest:false}));line.renderOrder=2;scene.add(line);return line;});
- const busGLTF=await new GLTFLoader().loadAsync(BASE+'models/valley-bus.glb');const buses=[0,1,2].map(i=>{const root=busGLTF.scene.clone(true);root.traverse(o=>{if(o instanceof T.Mesh){o.castShadow=true;o.receiveShadow=true;}});root.userData.busIndex=i;scene.add(root);return root;});
- // Bake one local reflection probe after construction; all glass reflects our own scene geometry.
+ mark('roads');
+ const buses=[0,1,2].map(i=>{const root=busGLTF.scene.clone(true);root.traverse(o=>{if(o instanceof T.Mesh){o.castShadow=true;o.receiveShadow=true;}});root.userData.busIndex=i;scene.add(root);return root;});
+ mark('bus');
+ // Local reflections are only needed for close architectural views. Keep the
+ // shared environment during startup instead of rendering the entire scene six times.
  const probeTarget=new T.WebGLCubeRenderTarget(128,{generateMipmaps:true,minFilter:T.LinearMipmapLinearFilter});
  const probe=new T.CubeCamera(1,2500,probeTarget),probePoint=local({lon:-121.82586,lat:37.27594});probe.position.set(probePoint.x,groundHeight(dem,probePoint.x,probePoint.y)+8,probePoint.y);
  sun.target.position.copy(probe.position);sun.position.copy(probe.position).add(new T.Vector3(-420,470,240));
- vegetation.update(probe);probe.update(renderer,scene);scene.environment=probeTarget.texture;scene.environmentIntensity=.8;
+ let reflectionState:'idle'|'building'|'ready'='idle';
+ async function prepareReflections(){
+  if(reflectionState!=='idle'||disposed)return;
+  reflectionState='building';
+  await renderer.compileAsync(scene,probe.children[0] as T.PerspectiveCamera);
+  if(disposed)return;
+  // Screen-space labels are UI, so keep them out of the architectural reflection.
+  const sprites=[...labels,...busLabels],visible=sprites.map(sprite=>sprite.visible);
+  sprites.forEach(sprite=>{sprite.visible=false;});
+  try {vegetation.update(probe);meadow.update(probe);probe.update(renderer,scene);}
+  finally {sprites.forEach((sprite,i)=>{sprite.visible=visible[i];});}
+  scene.environment=probeTarget.texture;scene.environmentIntensity=.8;
+  reflectionState='ready';dirty=true;
+ }
+ mark('reflectionSetup');
  const labels=[{p:local(routes.inbound[0]),text:'FEHREN LOT'},{p:local(routes.outbound[0]),text:'SKYWAY CAMPUS'}].map(({p,text})=>{const sprite=new T.Sprite(new T.SpriteMaterial({map:labelTexture(text),depthTest:false,transparent:true}));sprite.position.set(p.x,groundHeight(dem,p.x,p.y)+12,p.y);sprite.scale.set(74,11.6,1);scene.add(sprite);return sprite;});
  const busLabels=buses.map((_,i)=>{const label=new T.Sprite(new T.SpriteMaterial({map:labelTexture('SHUTTLE '+String(i+1).padStart(2,'0')),depthTest:false,transparent:true}));label.scale.set(30,4.7,1);scene.add(label);return label;});
  let selected=0,paused=false,speed=1,elapsed=0,mode='campus',disposed=false,frame=0,last=performance.now(),lastDraw=0,lastTick=0,fpsAt=performance.now(),frames=0,fps=0,totalFrames=0,dirty=true;
@@ -196,7 +201,7 @@ export async function createWorld(host:HTMLDivElement,onTick:(s:Snapshot)=>void,
  let shadowRange=270;
  const starts=[.9,.16,.44],target=new T.Vector3(),desiredCamera=new T.Vector3();
  let flight:{from:T.Vector3;to:T.Vector3;lookFrom:T.Vector3;lookTo:T.Vector3;start:number}|null=null;
- function fly(center:T.Vector3,offset:T.Vector3,nextMode:string){mode=nextMode;flight={from:camera.position.clone(),to:center.clone().add(offset),lookFrom:controls.target.clone(),lookTo:center,start:performance.now()};dirty=true;}
+ function fly(center:T.Vector3,offset:T.Vector3,nextMode:string){mode=nextMode;if(nextMode==='architecture'||nextMode==='quad')void prepareReflections().catch(()=>{reflectionState='idle';});flight={from:camera.position.clone(),to:center.clone().add(offset),lookFrom:controls.target.clone(),lookTo:center,start:performance.now()};dirty=true;}
  function focus(where:'campus'|'lot'){const p=local(where==='campus'?{lon:-121.8264,lat:37.2759}:routes.inbound[0]);const c=new T.Vector3(p.x,groundHeight(dem,p.x,p.y)+10,p.y);fly(c,where==='campus'?new T.Vector3(-220,175,280).multiplyScalar(mobile()?1.35:1):new T.Vector3(150,250,-330),where);}
  function overview(flat=false){
   const points=paths.flatMap(p=>p.points.map(v=>new T.Vector3(v.x,groundHeight(dem,v.x,v.y),v.y))),box=new T.Box3().setFromPoints(points),sphere=box.getBoundingSphere(new T.Sphere());
@@ -223,20 +228,20 @@ export async function createWorld(host:HTMLDivElement,onTick:(s:Snapshot)=>void,
    bus.position.set(p.x,(fl+fr+rl+rr)/4+Math.tan(slope)*.265-.01,p.z);bus.rotation.set(-slope,p.heading,roll,'YXZ');busLabels[i].position.copy(bus.position).add(new T.Vector3(0,9,0));busLabels[i].visible=!['bus','architecture','quad','facilities'].includes(mode)&&!(mobile()&&['overview','map'].includes(mode));});
   if(flight){const t=Math.min(1,(now-flight.start)/1200),ease=t*t*(3-2*t);camera.position.lerpVectors(flight.from,flight.to,ease);controls.target.lerpVectors(flight.lookFrom,flight.lookTo,ease);dirty=true;if(t===1)flight=null;}
   if(mode==='follow'||mode==='bus'){const bus=buses[selected],angle=bus.rotation.y+(mode==='bus'?Math.PI+.55:Math.PI+.4),range=mode==='bus'?22:55;target.copy(bus.position).add(new T.Vector3(0,mode==='bus'?2:1,0));desiredCamera.set(target.x+Math.sin(angle)*range,target.y+(mode==='bus'?13:35),target.z+Math.cos(angle)*range);if(camera.position.distanceTo(desiredCamera)>.02||controls.target.distanceTo(target)>.02){camera.position.lerp(desiredCamera,.13);controls.target.lerp(target,.2);dirty=true;}}
-  controls.update();vegetation.update(camera);roadside.update(camera);routeObjects.forEach(o=>{o.visible=mode!=='bus'&&mode!=='architecture'&&mode!=='facilities'&&mode!=='quad';o.material.depthTest=mode!=='overview'&&mode!=='map';});labels.forEach(l=>l.visible=!['bus','architecture','quad','facilities'].includes(mode));[...labels,...busLabels].forEach(l=>{const distance=camera.position.distanceTo(l.position),pixels=labels.includes(l)?(mobile()?100:140):110,width=distance*2*Math.tan(T.MathUtils.degToRad(camera.fov/2))/host.clientHeight*pixels;l.scale.set(width,width*80/512,1);});
+  controls.update();vegetation.update(camera);meadow.update(camera);roadside.update(camera);routeObjects.forEach(o=>{o.visible=mode!=='bus'&&mode!=='architecture'&&mode!=='facilities'&&mode!=='quad';o.material.depthTest=mode!=='overview'&&mode!=='map';});labels.forEach(l=>l.visible=!['bus','architecture','quad','facilities'].includes(mode));[...labels,...busLabels].forEach(l=>{const distance=camera.position.distanceTo(l.position),pixels=labels.includes(l)?(mobile()?100:140):110,width=distance*2*Math.tan(T.MathUtils.degToRad(camera.fov/2))/host.clientHeight*pixels;l.scale.set(width,width*80/512,1);});
   const shadowTarget=(mode==='bus'||mode==='follow')?buses[selected].position:controls.target;sun.target.position.copy(shadowTarget);sun.position.copy(shadowTarget).add(new T.Vector3(-420,470,240));
   const nextShadowRange=mode==='bus'?45:mode==='follow'?90:['architecture','quad'].includes(mode)?65:mode==='facilities'?150:270;if(nextShadowRange!==shadowRange){shadowRange=nextShadowRange;sun.shadow.camera.left=-shadowRange;sun.shadow.camera.right=shadowRange;sun.shadow.camera.top=shadowRange;sun.shadow.camera.bottom=-shadowRange;sun.shadow.camera.updateProjectionMatrix();sun.shadow.normalBias=mode==='bus'?.025:nextShadowRange<=90?.04:.15;}
   const mapBackground=mode==='overview'||mode==='map',nextBackground=mapBackground?overviewBackground:daylight;
   if(scene.background!==nextBackground){scene.background=nextBackground;atmosphere.color.set(mapBackground?'#152631':'#d9e1db');atmosphere.near=mapBackground?5500:3500;atmosphere.far=mapBackground?11000:8500;dirty=true;}
-  groundDetailEnabled.value=camera.position.distanceTo(controls.target)<500?1:0;
   const drawInterval=1000/30,sinceDraw=now-lastDraw;
   if(dirty&&sinceDraw>=drawInterval){renderer.render(scene,camera);if(worldFirstRenderMs===null)worldFirstRenderMs=Math.round(performance.now()-startupAt);dirty=false;lastDraw=now-(sinceDraw%drawInterval);frames++;totalFrames++;}
   if(now-fpsAt>1000){const sample=frames*1000/(now-fpsAt);fps=Math.round(sample);if(measuredMode!==mode){fpsHistory.length=0;measuredMode=mode;}if(!paused&&totalFrames>90){fpsHistory.push(sample);if(fpsHistory.length>30)fpsHistory.shift();}frames=0;fpsAt=now;}
-  if(now-lastTick>350){const info={renderer:'Three.js / local geometry',worldFirstRenderMs,mode,loaded:true,fps,paused,viewport:{width:innerWidth,height:innerHeight},drawingBuffer:{width:renderer.domElement.width,height:renderer.domElement.height},pixelRatio:renderer.getPixelRatio(),fpsSamples:fpsHistory.length,averageFps:fpsHistory.length?Math.round(fpsHistory.reduce((a,b)=>a+b,0)/fpsHistory.length*10)/10:0,minimumFps:fpsHistory.length?Math.round(Math.min(...fpsHistory)*10)/10:0,totalFrames,drawCalls:renderer.info.render.calls,triangles:renderer.info.render.triangles,geometries:renderer.info.memory.geometries,textures:renderer.info.memory.textures,buildings:buildingRings.length,authoredCampusRoofs:Object.keys(campusEaves).length,trees:treePositions.length,parkedCars:grounds.parkedCars,fenceMeters:grounds.fenceMeters,streetLights:streetDetails.streetLights,roadMeters:roadStats.meters,roadMinimumClearance:roadStats.minimumClearance,roadWorstPoint:roadStats.worstPoint,roadsideRoofs:roadsideStats.pitchedRoofs,roadsideFacades:roadsideStats.detailedFacades,maximumRoadsideRoofRise:roadsideStats.maximumRoofRise,terrainAdjustedIds:roadsideStats.terrainAdjustedIds,terrainIntrusionIds:roadsideStats.terrainIntrusionIds,measuredRoadsideRoofs:roadsideStats.measuredRoofs,rejectedRoofProfiles:roadsideStats.rejectedRoofProfiles,maximumBuildingGroundSpan:roadsideStats.maximumGroundSpan,terrainGrid:{width:dem.width,height:dem.height},sceneSource:'locally hosted assets'};host.dataset.diagnostics=JSON.stringify(info);onTick({progress,distance:paths.map(p=>p.length),fps,selected,loaded:true,pending:0,mode,speedMph:paused?0:Math.round(paths[selected===1?1:0].length/480*2.237),location:mode==='quad'?'CAMPUS QUAD':mode==='facilities'?'CAMPUS ATHLETICS':mode==='architecture'?'CONSERVATORY':mode==='campus'?'SKYWAY CAMPUS':mode==='lot'?'FEHREN LOT':selected===1?'SKYWAY → FEHREN':'FEHREN → SKYWAY'});lastTick=now;}
+  if(now-lastTick>350){const info={renderer:'Three.js / local geometry',worldFirstRenderMs,startupStages,reflections:reflectionState,mode,loaded:true,fps,paused,viewport:{width:innerWidth,height:innerHeight},drawingBuffer:{width:renderer.domElement.width,height:renderer.domElement.height},pixelRatio:renderer.getPixelRatio(),fpsSamples:fpsHistory.length,averageFps:fpsHistory.length?Math.round(fpsHistory.reduce((a,b)=>a+b,0)/fpsHistory.length*10)/10:0,minimumFps:fpsHistory.length?Math.round(Math.min(...fpsHistory)*10)/10:0,totalFrames,drawCalls:renderer.info.render.calls,triangles:renderer.info.render.triangles,geometries:renderer.info.memory.geometries,textures:renderer.info.memory.textures,buildings:buildingRings.length,authoredCampusRoofs:Object.keys(campusEaves).length,trees:treePositions.length,parkedCars:grounds.parkedCars,fenceMeters:grounds.fenceMeters,streetLights:streetDetails.streetLights,roadMeters:roadStats.meters,roadMinimumClearance:roadStats.minimumClearance,roadWorstPoint:roadStats.worstPoint,roadsideRoofs:roadsideStats.pitchedRoofs,roadsideFacades:roadsideStats.detailedFacades,maximumRoadsideRoofRise:roadsideStats.maximumRoofRise,terrainAdjustedIds:roadsideStats.terrainAdjustedIds,terrainIntrusionIds:roadsideStats.terrainIntrusionIds,measuredRoadsideRoofs:roadsideStats.measuredRoofs,rejectedRoofProfiles:roadsideStats.rejectedRoofProfiles,maximumBuildingGroundSpan:roadsideStats.maximumGroundSpan,terrainGrid:{width:dem.width,height:dem.height},meadowClumps:meadow.count,landscapePatches:landscape.patches,landscapeDrawCalls:landscape.drawCalls,aerialTextures:0,sceneSource:'modeled terrain and surfaces'};host.dataset.diagnostics=JSON.stringify(info);onTick({progress,distance:paths.map(p=>p.length),fps,selected,loaded:true,pending:0,mode,speedMph:paused?0:Math.round(paths[selected===1?1:0].length/480*2.237),location:mode==='quad'?'CAMPUS QUAD':mode==='facilities'?'CAMPUS ATHLETICS':mode==='architecture'?'CONSERVATORY':mode==='campus'?'SKYWAY CAMPUS':mode==='lot'?'FEHREN LOT':selected===1?'SKYWAY → FEHREN':'FEHREN → SKYWAY'});lastTick=now;}
  }
  const resize=new ResizeObserver(()=>{fpsHistory.length=0;frames=0;fpsAt=performance.now();camera.aspect=host.clientWidth/host.clientHeight;camera.updateProjectionMatrix();renderer.setSize(host.clientWidth,host.clientHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,mobile()?1:1.4));if(mode==='overview'||mode==='map')overview(mode==='map');dirty=true;});resize.observe(host);
  const visibility=()=>{cancelAnimationFrame(frame);if(!document.hidden){last=performance.now();dirty=true;frame=requestAnimationFrame(tick);}};document.addEventListener('visibilitychange',visibility);
  const contextLost=(e:Event)=>{e.preventDefault();onError('The graphics context was lost. Reload the local scene.');};renderer.domElement.addEventListener('webglcontextlost',contextLost);
+ await renderer.compileAsync(scene,camera);mark('shaders');
  frame=requestAnimationFrame(tick);
- return {setOrbitMode(orbit:boolean){controls.mouseButtons.LEFT=orbit?T.MOUSE.ROTATE:T.MOUSE.PAN;controls.mouseButtons.RIGHT=T.MOUSE.ROTATE;controls.touches.ONE=orbit?T.TOUCH.ROTATE:T.TOUCH.PAN;controls.touches.TWO=orbit?T.TOUCH.DOLLY_PAN:T.TOUCH.DOLLY_ROTATE;},inspectQuad(){const p=local({lon:-121.82620,lat:37.276257});fly(new T.Vector3(p.x,groundHeight(dem,p.x,p.y)+6,p.y),new T.Vector3(23,10,58).multiplyScalar(mobile()?1.25:1),'quad');},inspectFacilities(){const p=local({lon:-121.823954,lat:37.275144});fly(new T.Vector3(p.x,groundHeight(dem,p.x,p.y)+4,p.y),new T.Vector3(-100,100,115).multiplyScalar(mobile()?1.3:1),'facilities');},inspectCampus(){const p=conservatoryPoint(7.6,1.25);fly(new T.Vector3(p.x,104.8,p.y),new T.Vector3(-43,16,39).multiplyScalar(mobile()?1.65:1),'architecture');},setSelected(i:number){selected=i;dirty=true;},setFollow(v:boolean){flight=null;if(v){mode='follow';dirty=true;}else overview();},seek(progress:number){if(!Number.isFinite(progress))return;elapsed=((T.MathUtils.clamp(progress,0,.999999)-starts[selected]+1)%1)*480;dirty=true;},setPaused(v:boolean){paused=v;dirty=true;},setSpeed(v:number){speed=v;},setFlat(v:boolean){overview(v);},reset(){overview();},zoom(f:number){camera.position.sub(controls.target).multiplyScalar(f).add(controls.target);dirty=true;},inspect(){flight=null;mode='bus';dirty=true;},focusStop:focus,setRoute(i:number){routeObjects.forEach((o,j)=>o.material.opacity=i===j?.95:.5);dirty=true;},stats:{buildings:buildingRings.length},dispose(){disposed=true;cancelAnimationFrame(frame);resize.disconnect();document.removeEventListener('visibilitychange',visibility);renderer.domElement.removeEventListener('pointerdown',pointerDown);renderer.domElement.removeEventListener('pointerup',pickBus);controls.dispose();vegetation.dispose();const geometries=new Set<T.BufferGeometry>(),materials=new Set<T.Material>(),textures=new Set<T.Texture>();scene.traverse(o=>{if(o instanceof T.Mesh||o instanceof T.Line||o instanceof T.Sprite){if('geometry'in o)geometries.add(o.geometry);if(o instanceof T.InstancedMesh)o.dispose();(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>materials.add(m));}});materials.forEach(m=>{for(const v of Object.values(m))if(v instanceof T.Texture&&v!==vegetation.crownTexture)textures.add(v);m.dispose();});geometries.forEach(g=>g.dispose());textures.forEach(t=>t.dispose());campusTexture.dispose();daylight.dispose();probeTarget.dispose();environment.dispose();renderer.dispose();renderer.domElement.remove();}};
+ return {setOrbitMode(orbit:boolean){controls.mouseButtons.LEFT=orbit?T.MOUSE.ROTATE:T.MOUSE.PAN;controls.mouseButtons.RIGHT=T.MOUSE.ROTATE;controls.touches.ONE=orbit?T.TOUCH.ROTATE:T.TOUCH.PAN;controls.touches.TWO=orbit?T.TOUCH.DOLLY_PAN:T.TOUCH.DOLLY_ROTATE;},inspectQuad(){const p=local({lon:-121.82620,lat:37.276257});fly(new T.Vector3(p.x,groundHeight(dem,p.x,p.y)+6,p.y),new T.Vector3(23,10,58).multiplyScalar(mobile()?1.25:1),'quad');},inspectFacilities(){const p=local({lon:-121.823954,lat:37.275144});fly(new T.Vector3(p.x,groundHeight(dem,p.x,p.y)+4,p.y),new T.Vector3(-100,100,115).multiplyScalar(mobile()?1.3:1),'facilities');},inspectCampus(){const p=conservatoryPoint(7.6,1.25);fly(new T.Vector3(p.x,104.8,p.y),new T.Vector3(-43,16,39).multiplyScalar(mobile()?1.65:1),'architecture');},setSelected(i:number){selected=i;dirty=true;},setFollow(v:boolean){flight=null;if(v){mode='follow';dirty=true;}else overview();},seek(progress:number){if(!Number.isFinite(progress))return;elapsed=((T.MathUtils.clamp(progress,0,.999999)-starts[selected]+1)%1)*480;dirty=true;},setPaused(v:boolean){paused=v;dirty=true;},setSpeed(v:number){speed=v;},setFlat(v:boolean){overview(v);},reset(){overview();},zoom(f:number){camera.position.sub(controls.target).multiplyScalar(f).add(controls.target);dirty=true;},inspect(){flight=null;mode='bus';dirty=true;},focusStop:focus,setRoute(i:number){routeObjects.forEach((o,j)=>o.material.opacity=i===j?.95:.5);dirty=true;},stats:{buildings:buildingRings.length},dispose(){disposed=true;cancelAnimationFrame(frame);resize.disconnect();document.removeEventListener('visibilitychange',visibility);renderer.domElement.removeEventListener('pointerdown',pointerDown);renderer.domElement.removeEventListener('pointerup',pickBus);controls.dispose();vegetation.dispose();const geometries=new Set<T.BufferGeometry>(),materials=new Set<T.Material>(),textures=new Set<T.Texture>();scene.traverse(o=>{if(o instanceof T.Mesh||o instanceof T.Line||o instanceof T.Sprite){if('geometry'in o)geometries.add(o.geometry);if(o instanceof T.InstancedMesh)o.dispose();(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>materials.add(m));}});materials.forEach(m=>{for(const v of Object.values(m))if(v instanceof T.Texture&&v!==vegetation.crownTexture)textures.add(v);m.dispose();});geometries.forEach(g=>g.dispose());textures.forEach(t=>t.dispose());daylight.dispose();probeTarget.dispose();environment.dispose();renderer.dispose();renderer.domElement.remove();}};
 }

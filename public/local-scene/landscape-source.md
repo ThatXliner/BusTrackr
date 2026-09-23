@@ -1,0 +1,9 @@
+# Modeled landscape
+
+The runtime renders measured terrain geometry, textured building meshes and authored landscape surfaces. It does not request `ground.jpg`, `campus.jpg`, or `campus-bounds.json`. The remaining small-scale texture maps depict generic material detail, not geographic imagery or baked buildings/shadows.
+
+`npm run build:landscape` creates `landscape.json` from the bundled OSM extract, routes, corridor, footprints, road widths, and offline NAIP reference. Coordinates use the existing local x/z meter system. The merged corridor/campus boundary is clipped to the measured terrain extent. Side roads and walking paths are selected from OSM geometry; widths are inferred by class. Land-use parcels supply broad lawn/gravel materials. The 602 tree positions retain the previous offline vegetation-color selection, so removing the image does not randomly relocate the existing canopy.
+
+`src/local/landscape.ts` authors campus decks, parking outlines and bay paint, baseball turf/dirt/baselines, practice-field mowing strips and pitch lines, and tennis pads. Positions use the same campus-reference pixel-to-geography transform as the existing buildings and grounds. The Fehren apron is illustrative, not a surveyed parking plan. Surfaces follow the exact rendered terrain triangles, and the pool deck has an opening for the separately modeled level pool. The new 5,106 dry-grass clumps use instanced geometry and disappear outside close viewing distance.
+
+These are detailed exterior approximations. Missing source coverage, estimated widths and dimensions, sparse facade openings, and generic material roughness remain reconstruction limits; they are not represented as measured architectural plans. Source images and PNG masters remain available for authoring and provenance, but are not downloaded by the app.
