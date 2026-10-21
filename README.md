@@ -65,3 +65,9 @@ Drag to pan by default. The Pan/Orbit toggle switches one-finger or left-mouse d
 ## POC release limits
 
 The scenery is an authored approximation, with original detailed bus models and reference-informed campus landmarks. It is not photogrammetry. Bus positions and ETAs are simulated. Real GPS, school-verified routing, native packaging, accessibility review and physical-phone profiling are later production work. Six roadside building envelopes use documented inferred height corrections to clear sampled uphill ground; small surface details and transparent glazing use simplified materials. See `docs/performance.md` for measured preview results and limitations.
+
+## TLS runtime requirement
+
+Use Node.js 22.23.4+, 24.22.1+, or 26.12.1+ for installs, builds, and server execution. Node 23 and 25 are unsupported. These floors include the October 2026 eMudhra CA distrust update.
+Restart or rebuild existing deployments after upgrading; an engine declaration alone does not update a running process.
+The published site is static: browser HTTPS validation belongs to the browser; this requirement protects the build toolchain.
