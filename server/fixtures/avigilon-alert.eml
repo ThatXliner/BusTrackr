@@ -1,0 +1,8 @@
+From: Avigilon Alerts <Avigilonalerts@vcs.net>
+To: Camera Alerts <alerts@example.invalid>
+Subject: Camera alert sample
+Message-ID: <avigilon-sample-20261016@example.invalid>
+Date: Fri, 16 Oct 2026 14:07:00 -0700
+Content-Type: text/plain; charset=utf-8
+
+[2026-Oct-16 02:06:43 PM (PDT)] BEI Bus has arrived.

@@ -11,12 +11,19 @@
     "build:local-footprints": "python3 scripts/build-local-footprints.py",
     "fetch:local-aerial": "python3 scripts/fetch-local-aerial.py && python3 scripts/fetch-local-aerial.py --campus",
     "check:startup": "node scripts/check-startup.mjs",
-    "build:landscape": "node scripts/build-landscape.mjs"
+    "build:landscape": "node scripts/build-landscape.mjs",
+    "alerts": "node --env-file=.env.server server/index.mjs",
+    "alerts:sample": "node server/index.mjs --sample",
+    "test:alerts": "node --test server/*.test.mjs",
+    "alerts:check": "node --env-file=.env.server server/index.mjs --once",
+    "alerts:export": "node server/export-history.mjs"
   },
   "dependencies": {
     "@turf/buffer": "^7.4.0",
     "@turf/helpers": "^7.4.0",
+    "imapflow": "^2.4.2",
     "lucide-react": "^0.468.0",
+    "mailparser": "^3.9.39",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "three": "^0.180.0"

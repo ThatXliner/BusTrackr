@@ -1,0 +1,9 @@
+From: Campus Camera <camera@example.invalid>
+To: Bus Alerts <alerts@example.invalid>
+Subject: Bus detection
+Message-ID: <sample-campus-corner-001@example.invalid>
+Date: Wed, 14 Oct 2026 12:00:00 -0700
+Content-Type: text/plain; charset=utf-8
+
+Bus detected.
+Zone: campus-corner

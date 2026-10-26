@@ -1,6 +1,10 @@
 # Valley Shuttle
 
-Phone-first Fehren ↔ Skyway shuttle POC with a locally rendered Three.js scene. This replaces the earlier streamed Cesium environment.
+BusTrackr includes a native Expo app in `mobile/`, a React web prototype with a local Three.js scene, and a camera-email worker. Both clients show checkpoint observations separately from arrival estimates.
+
+## Native iOS and Android app
+
+See [native setup and build instructions](mobile/README.md). The app works without credentials in clearly labelled sample mode. It uses native views and a route schematic; the web scene remains available below.
 
 ## Run
 
@@ -18,13 +22,17 @@ npm run preview -- --port 4174
 
 The production base path is `/BusTrackr/`.
 
+## Camera email alerts
+
+An IMAP worker and detection API scaffold are available for an existing mailbox. No domain is required. Run `npm run alerts:sample` to try the bundled alert and `npm run test:alerts` to verify it. See [camera alert setup](docs/camera-alerts.md) for credentials, hosting, and limitations. The default camera view shows timestamped observations and a separate estimated marker; Scene demo retains the simulated fleet. Production estimates require a confirmed timetable. [Research and design decisions](docs/arrival-estimation-research.md) explains the baseline and XGBoost upgrade path.
+
 ## Scene
 
 Three.js renders a USGS elevation mesh clipped to the bus corridor and campus, using a local grid that blends measured lidar ground around campus into the retained route terrain (`public/local-scene/terrain-source.md`), with meter-scaled terrain materials and explicit modeled surfaces. Aerial imagery is used only as an offline reference and is never loaded by the renderer. OSM building footprints become locally textured walls and inferred pitched or flat roofs. Nearby roadside buildings receive windows, doors, gutters and estimated rooftop equipment; `public/local-scene/buildings-source.md` documents the height handling and inference limits. Three main campus roofs use authored architectural forms with elevations guided by USGS lidar. Raw point-derived roof meshes were rejected after close views exposed stepped artifacts; facade forms and sparse window groups remain approximate. Authored landmarks include the Conservatory glass canopy and stone entry, the quad tower, veranda and cross, stadium seating and lights, the competition pool, baseball fencing and dugouts, and parked vehicles. Ground placements are documented in `public/local-scene/grounds-source.md`. Trees use 602 offline instance placements; buildings, fields, and the route are excluded. Separate geometry provides side streets, paths, parking lots and bay paint, baseball infields, practice turf, tennis pads, and close-range dry grass clumps. The terrain follows the exact corridor boundary rather than a jagged grid cutoff. Route road surfaces now include estimated full carriageway widths, meter-scale asphalt, lane paint and curbs. `public/local-scene/roads-source.md` records the estimates and missing junction detail.
 
-The original detailed bus GLB is reused for three simulated shuttles. Campus, Conservatory, quad, sports, Fehren, full-route, overhead, follow, and close-up cameras are available. Pause and speed controls affect the eight-minute demo trip cycles. No positions or ETAs are live.
+The original detailed bus GLB is reused for three simulated shuttles. Campus, Conservatory, quad, sports, Fehren, full-route, overhead, follow, and close-up cameras are available. Pause and speed controls affect the eight-minute demo trip cycles. These three demo-bus positions and ETAs are simulated. Camera mode displays separate observations and estimates when its backend and confirmed timetable are configured.
 
-This is a working independent reconstruction, not photogrammetry-quality scenery. Ground material scale is independent of aerial resolution. Surface boundaries, small features, and facades remain approximate; route alignment, widths, elevations, and service access need school confirmation. This is a React web POC, not an Expo native build.
+This is a working independent reconstruction, not photogrammetry-quality scenery. Ground material scale is independent of aerial resolution. Surface boundaries, small features, and facades remain approximate; route alignment, widths, elevations, and service access need school confirmation. This scene is the React web prototype. The separate `mobile/` package is the native Expo app.
 
 ## Performance
 
@@ -64,4 +72,4 @@ Drag to pan by default. The Pan/Orbit toggle switches one-finger or left-mouse d
 
 ## POC release limits
 
-The scenery is an authored approximation, with original detailed bus models and reference-informed campus landmarks. It is not photogrammetry. Bus positions and ETAs are simulated. Real GPS, school-verified routing, native packaging, accessibility review and physical-phone profiling are later production work. Six roadside building envelopes use documented inferred height corrections to clear sampled uphill ground; small surface details and transparent glazing use simplified materials. See `docs/performance.md` for measured preview results and limitations.
+The scenery is an authored approximation, with original detailed bus models and reference-informed campus landmarks. It is not photogrammetry. Demo bus positions and ETAs are simulated. Camera mode uses checkpoint observations and explicitly labelled schedule estimates; continuous GPS is not connected. A confirmed timetable, checkpoint placement/direction, school-verified routing, store signing and distribution, accessibility review and physical-phone profiling remain production work. Six roadside building envelopes use documented inferred height corrections to clear sampled uphill ground; small surface details and transparent glazing use simplified materials. See `docs/performance.md` for measured preview results and limitations.

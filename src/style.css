@@ -66,3 +66,25 @@ header{text-shadow:0 1px 4px #071018cc}.brand small,.scene-quality{color:#e0ebed
  main:is([data-view="architecture"],[data-view="quad"],[data-view="campus"],[data-view="facilities"]) .ride-card:not(.expanded) :is(.inspect-button,.expand-button){width:30px;padding:0}
 }
 @media(max-width:360px){.view-switch{right:19px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr))}.view-switch>button{padding:8px 2px;justify-content:center;font-size:8px}.view-switch>button svg{display:none}.building-menu{left:25%}}
+
+/* Camera estimates stay visually separate from the scene's simulated fleet. */
+.tracking-switch{position:absolute;left:28px;top:100px;z-index:12;display:flex;gap:4px;padding:5px;border-radius:12px;background:#14252eee;border:1px solid #ffffff26}
+.tracking-switch button{border:0;border-radius:8px;background:transparent;color:#bdcbd0;padding:9px 12px;font:inherit;font-size:12px;cursor:pointer}
+.tracking-switch button[aria-pressed=true]{background:#f0eedf;color:#152631}
+main[data-tracking=camera] .ride-card:not(.camera-panel),main[data-tracking=camera] .simulation-bar,main[data-tracking=camera] .scene-readout,main[data-tracking=camera] .scene-title{display:none}
+.camera-panel{position:absolute;left:30px;bottom:66px;width:350px;padding:24px;max-height:65vh;overflow-y:auto;border:1px solid #d9e2d832;background:#0d1a25eb;border-radius:18px;box-shadow:0 10px 40px #0003;backdrop-filter:blur(24px);z-index:3}
+.camera-panel p{font-size:14px;line-height:1.5;color:#bdcbd0;margin:12px 0}
+.camera-panel h2{font-size:25px}
+.camera-panel strong{font-size:15px;line-height:1.5}
+.camera-panel time,.camera-panel small{font-size:12px;color:#aebfc7;line-height:1.5}
+.camera-observation,.camera-estimate{border-top:1px solid #ffffff22;padding-top:16px;margin-top:16px}
+.camera-estimate strong{color:#ffc75c}.camera-panel .camera-note{font-size:12px}
+@media(max-width:700px){.tracking-switch{left:12px;top:76px}.camera-panel{left:12px;right:12px;bottom:47px;width:auto;padding:18px;max-height:43vh}.camera-panel .card-header{display:flex}.camera-panel h2{font-size:22px}.camera-panel .camera-note{margin-bottom:0}.camera-panel p{margin:8px 0}}
+@media(max-width:650px){
+ main[data-tracking] .view-switch{top:132px}
+ main[data-tracking=camera] .mini-map{display:none}
+ .camera-panel .card-header{margin-bottom:10px}.camera-panel h2{font-size:20px}
+ .camera-panel .camera-note,.camera-panel .estimate-context,.camera-panel time{display:none}
+ .camera-panel .camera-observation,.camera-panel .camera-estimate{padding-top:10px;margin-top:10px}
+ .camera-panel strong{font-size:14px}.camera-panel p{font-size:12px}
+}

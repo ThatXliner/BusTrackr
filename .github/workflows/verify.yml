@@ -1,0 +1,27 @@
+name: Verify web, worker and native app
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            mobile/package-lock.json
+      - run: npm ci
+      - run: npm ci --prefix mobile
+      - run: npm run test:alerts
+      - run: npm run build
+      - run: npm --prefix mobile run typecheck
+      - run: npm --prefix mobile run lint
+      - run: npm --prefix mobile test
+      - run: npm --prefix mobile run export:native
