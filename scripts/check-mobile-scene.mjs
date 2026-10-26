@@ -1,0 +1,50 @@
+import assert from 'node:assert/strict';
+import {readFile, writeFile, mkdir} from 'node:fs/promises';
+import {chromium} from 'playwright';
+const {html} = JSON.parse(await readFile(new URL('../mobile/src/map/scene.generated.json', import.meta.url), 'utf8'));
+const browser = await chromium.launch({headless: true});
+const page = await browser.newPage({viewport: {width: 390, height: 400}});
+const errors = [], network = [];
+page.on('pageerror', error => errors.push(error.message));
+page.on('request', request => {if (/^https?:/.test(request.url())) network.push(request.url());});
+await page.route(/^https?:/, route => route.abort());
+try {
+  await page.setContent(html, {waitUntil: 'load'});
+  const diagnostics = () => page.locator('#world').getAttribute('data-diagnostics').then(JSON.parse);
+  await page.waitForFunction(() => JSON.parse(document.querySelector('#world')?.dataset.diagnostics || '{}').worldFirstRenderMs > 0, null, {timeout: 60_000});
+  const initial = await diagnostics();
+  assert.equal(initial.tracking, true);
+  assert.equal(initial.visibleDemoBuses, 0);
+  assert(initial.buildings > 0 && initial.trees > 0 && initial.triangles > 0);
+  const send = command => page.evaluate(command => window.BusTrackrScene.receive(command), command);
+  for (const [view, mode] of [['route', 'overview'], ['fehren', 'lot'], ['buildings', 'architecture'], ['sports', 'facilities'], ['campus', 'campus']]) {
+    await send({kind: 'camera', view});
+    await page.waitForFunction(mode => JSON.parse(document.querySelector('#world').dataset.diagnostics).mode === mode, mode);
+  }
+  await send({kind: 'orbit', enabled: true});
+  await send({kind: 'zoom', factor: .75});
+  const marker = {direction: 'outbound', progress: .35, lower: .2, upper: .5};
+  await send({kind: 'state', marker, expiresAt: Date.now() + 2000, active: true});
+  await page.waitForFunction(() => JSON.parse(document.querySelector('#world').dataset.diagnostics).estimateVisible);
+  await send({kind: 'camera', view: 'estimate'});
+  await send({kind: 'zoom', factor: .75});
+  await page.waitForFunction(() => JSON.parse(document.querySelector('#world').dataset.diagnostics).mode === 'explore');
+  await page.waitForFunction(() => !JSON.parse(document.querySelector('#world').dataset.diagnostics).estimateVisible);
+  await send({kind: 'state', marker, expiresAt: Date.now() + 30_000, active: true});
+  await page.waitForFunction(() => JSON.parse(document.querySelector('#world').dataset.diagnostics).estimateVisible);
+  await send({kind: 'state', marker: null, expiresAt: 0, active: true});
+  await page.waitForFunction(() => !JSON.parse(document.querySelector('#world').dataset.diagnostics).estimateVisible);
+  await send({kind: 'state', marker: null, expiresAt: 0, active: false});
+  const paused = await diagnostics();
+  await page.waitForTimeout(800);
+  assert.equal((await diagnostics()).totalFrames, paused.totalFrames, 'Background rendering must stop');
+  await send({kind: 'state', marker: null, expiresAt: 0, active: true});
+  await send({kind: 'camera', view: 'campus'});
+  await page.waitForTimeout(1500);
+  await mkdir('.audit/native-3d', {recursive: true});
+  await page.screenshot({path: '.audit/native-3d/offline-render.png'});
+  await writeFile('.audit/native-3d/diagnostics.json', JSON.stringify(await diagnostics(), null, 2));
+  assert.deepEqual(network, [], 'Packaged scene must not request any server');
+  assert.deepEqual(errors, []);
+  console.log('Offline 3D scene passed: geometry, presets, estimate expiry, marker clearing, rendering suspension, zero network requests.');
+} finally {await browser.close();}

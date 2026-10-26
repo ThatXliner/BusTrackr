@@ -4,7 +4,7 @@ BusTrackr includes a native Expo app in `mobile/`, a React web prototype with a 
 
 ## Native iOS and Android app
 
-See [native setup and build instructions](mobile/README.md). The app works without credentials in clearly labelled sample mode. It uses native views and a route schematic; the web scene remains available below.
+See [native setup and build instructions](mobile/README.md). The app works without credentials in clearly labelled sample mode. It combines native controls and status cards with the detailed 3D campus and route, bundled offline in a local WebView.
 
 ## Run
 
@@ -32,7 +32,7 @@ Three.js renders a USGS elevation mesh clipped to the bus corridor and campus, u
 
 The original detailed bus GLB is reused for three simulated shuttles. Campus, Conservatory, quad, sports, Fehren, full-route, overhead, follow, and close-up cameras are available. Pause and speed controls affect the eight-minute demo trip cycles. These three demo-bus positions and ETAs are simulated. Camera mode displays separate observations and estimates when its backend and confirmed timetable are configured.
 
-This is a working independent reconstruction, not photogrammetry-quality scenery. Ground material scale is independent of aerial resolution. Surface boundaries, small features, and facades remain approximate; route alignment, widths, elevations, and service access need school confirmation. This scene is the React web prototype. The separate `mobile/` package is the native Expo app.
+This is a working independent reconstruction, not photogrammetry-quality scenery. Ground material scale is independent of aerial resolution. Surface boundaries, small features, and facades remain approximate; route alignment, widths, elevations, and service access need school confirmation. The scene runs in the React web prototype and is bundled into the native Expo app in `mobile/`.
 
 ## Performance
 

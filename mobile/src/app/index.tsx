@@ -1,12 +1,13 @@
 import {useEffect, useState} from 'react';
 import {ActivityIndicator, KeyboardAvoidingView, Modal, Platform, Pressable, RefreshControl, ScrollView, Text, TextInput, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import Svg, {Circle, Line, Path, Rect} from 'react-native-svg';
-import {pacificTime, parseEndpoint, type Presentation} from '../shuttle/feed';
+import Svg, {Circle, Path, Rect} from 'react-native-svg';
+import {pacificTime, parseEndpoint} from '../shuttle/feed';
 import {defaultSource, loadSource, saveSource} from '../shuttle/settings';
 import {scenarios, type Source} from '../shuttle/samples';
 import {useShuttle} from '../shuttle/useShuttle';
 import {colors, styles as s} from '../styles';
+import {SceneMap} from '../map/SceneMap';
 
 const messages = {
   loading: {title: 'Checking the feed', body: 'Looking for the latest camera observation and a usable estimate.'},
@@ -29,35 +30,10 @@ function Button({label, onPress, secondary = false}: {label: string; onPress: ()
     <Text style={[s.buttonText, secondary && s.secondaryButtonText]}>{label}</Text>
   </Pressable>;
 }
-function Route({view}: {view: Presentation}) {
-  const prediction = view.kind === 'estimated' ? view.prediction : null;
-  const inbound = prediction?.direction === 'inbound';
-  const marker = prediction?.marker;
-  const description = marker ? `Estimated route position toward ${inbound ? 'campus' : 'Fehren'}. This is a model estimate, not GPS.` : 'Route between campus and Fehren. No position estimate is available.';
-  return <View style={s.card}>
-    <View style={s.row}><Text style={s.eyebrow}>THE ROUTE</Text><Text style={s.caption}>Schematic · not to scale</Text></View>
-    <View accessible accessibilityLabel={description} style={s.diagram}>
-      <Svg width="100%" height={108} viewBox="0 0 320 108" accessible={false}>
-        <Line x1={20} y1={62} x2={300} y2={62} stroke={colors.line} strokeWidth={4}/>
-        {marker && <>
-          <Rect x={20 + marker.lower * 280} y={46} width={(marker.upper - marker.lower) * 280} height={32} rx={8} fill={colors.amberTint} stroke={colors.amber} strokeDasharray="4 4"/>
-          <Line x1={20 + marker.progress * 280} y1={35} x2={20 + marker.progress * 280} y2={62} stroke={colors.amber} strokeDasharray="3 3"/>
-          <Rect x={6 + marker.progress * 280} y={7} width={28} height={27} rx={6} fill={colors.amber} />
-          <Path d={`M${13 + marker.progress * 280} 15h14v10h-14z m3 12v-2m8 2v-2`} stroke={colors.card} strokeWidth={1.5} fill="none"/>
-        </>}
-        <Circle cx={20} cy={62} r={7} stroke={colors.ink} strokeWidth={2} fill={colors.card}/>
-        <Circle cx={300} cy={62} r={7} stroke={colors.ink} strokeWidth={2} fill={colors.card}/>
-      </Svg>
-    </View>
-    <View style={s.row}><Text style={s.stop}>{inbound ? 'Fehren' : 'Campus'}</Text><Text style={s.stop}>{inbound ? 'Campus' : 'Fehren'}</Text></View>
-    <View style={s.rule}/>
-    <Text style={s.body}>{marker ? 'Dashed zone = estimated position range' : 'Position estimate hidden'}</Text>
-    <Text style={s.caption}>Not GPS. The camera does not confirm departure.</Text>
-  </View>;
-}
 function ShuttleScreen({source, changeSource, settingsError}: {source: Source; changeSource: (source: Source) => void; settingsError: string}) {
   const {view, feed, now, refresh} = useShuttle(source);
   const [settings, setSettings] = useState(false);
+  const [mapExpanded, setMapExpanded] = useState(false);
   const [endpoint, setEndpoint] = useState(source.kind === 'api' ? source.endpoint : '');
   const [inputError, setInputError] = useState('');
   const sample = source.kind === 'sample' || feed?.status === 'sample';
@@ -73,13 +49,14 @@ function ShuttleScreen({source, changeSource, settingsError}: {source: Source; c
       setInputError(''); setSettings(false);
     } catch (error) {setInputError(error instanceof Error ? error.message : 'Check the status URL.');}
   }
-  return <SafeAreaView style={s.page} edges={['top', 'left', 'right']}>
+  return <SafeAreaView style={s.page} edges={['top', 'left', 'right', 'bottom']}>
     <View style={s.header}>
       <View style={s.brand}><View style={s.brandIcon}><Icon kind="bus" color={colors.card}/></View><View><Text style={s.wordmark}>BusTrackr</Text><Text style={s.caption}>Fehren ↔ Skyway</Text></View></View>
       <Pressable accessibilityRole="button" accessibilityLabel="Connection settings" onPress={() => setSettings(true)} style={s.iconButton}><Icon kind="settings"/></Pressable>
     </View>
     {sample && <View style={s.sampleBanner}><Text style={s.sampleBannerText}>SAMPLE DATA · NOT A REAL SHUTTLE</Text><Pressable accessibilityRole="button" onPress={() => setSettings(true)} style={s.bannerButton}><Text style={s.sampleLink}>Connect feed ↗</Text></Pressable></View>}
-    <ScrollView contentContainerStyle={s.content} refreshControl={<RefreshControl refreshing={false} onRefresh={refresh} tintColor={colors.teal}/> }>
+    <SceneMap prediction={view.kind === 'estimated' ? view.prediction : null} checkedAt={feed?.lastCheckedAt ?? null} expanded={mapExpanded} onExpand={() => setMapExpanded(value => !value)}/>
+    <ScrollView style={mapExpanded ? {display: 'none'} : s.flex} contentContainerStyle={s.content} refreshControl={<RefreshControl refreshing={false} onRefresh={refresh} tintColor={colors.teal}/> }>
       <View style={s.row}><View style={s.statusRow}><View style={[s.statusDot, {backgroundColor: estimated ? colors.teal : colors.amber}]}/><Text accessibilityLiveRegion="polite" style={s.statusText}>{status}</Text></View><Pressable accessibilityRole="button" onPress={refresh} style={s.refreshButton}><Text style={s.refreshText}>Refresh ↻</Text></Pressable></View>
       {!!settingsError && <Text accessibilityRole="alert" style={s.error}>{settingsError}</Text>}
       <View style={[s.card, s.arrivalCard]}>
@@ -110,7 +87,6 @@ function ShuttleScreen({source, changeSource, settingsError}: {source: Source; c
         <Text style={s.caption}>{observation ? 'A vehicle was detected. This does not identify the shuttle, its direction, or whether it has left.' : 'A camera sighting will appear here when one is received. No arrival is implied by an empty feed.'}</Text>
         {observation && !observation.eventAt && <Text style={s.caption}>Email received {pacificTime(observation.receivedAt)}. Delivery time is not camera time.</Text>}
       </View>
-      <Route view={view}/>
       <View style={s.footer}>
         <Text style={s.caption}>{feed?.lastCheckedAt ? `Mailbox checked ${pacificTime(feed.lastCheckedAt)}` : 'No successful mailbox check yet'}</Text>
         <Text style={s.caption}>{feed ? `${feed.eventCount} camera emails saved` : 'Observation history unavailable'} · Times shown in Pacific time</Text>
@@ -137,7 +113,7 @@ function ShuttleScreen({source, changeSource, settingsError}: {source: Source; c
             <Button label="Use sample data" secondary onPress={() => {changeSource(defaultSource); setSettings(false); setInputError('');}}/>
             <View style={s.rule}/>
             <Text style={s.eyebrow}>ABOUT THE DATA</Text>
-            <Text style={s.body}>Camera sightings are observations at one checkpoint. Arrival ranges and the dashed route marker are model estimates, not GPS.</Text>
+            <Text style={s.body}>Camera sightings are observations at one checkpoint. Arrival ranges and the amber 3D route marker are model estimates, not GPS.</Text>
             <Text style={s.body}>An unconfirmed timetable, ambiguous run, stale update or unavailable feed hides all estimates. No camera sighting proves a subsequent departure.</Text>
             <Text style={s.caption}>Only the status URL and sample selection are stored on this device. No location permission is needed.</Text>
           </ScrollView>

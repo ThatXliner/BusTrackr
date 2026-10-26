@@ -19,6 +19,8 @@ jobs:
             mobile/package-lock.json
       - run: npm ci
       - run: npm ci --prefix mobile
+      - run: npx playwright install --with-deps chromium
+      - run: npm run check:mobile-scene
       - run: npm run test:alerts
       - run: npm run build
       - run: npm --prefix mobile run typecheck

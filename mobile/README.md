@@ -1,6 +1,6 @@
 # Run BusTrackr on a phone
 
-BusTrackr is a native Expo and React Native app for iOS and Android. It uses native views and a route schematic. It does not embed the Three.js website.
+BusTrackr is a native Expo and React Native app for iOS and Android. Native status cards and controls surround the detailed Three.js campus and route scene. The renderer runs in a local WebView with its terrain, buildings, textures, roads, and model bundled offline. It never loads a hosted website.
 
 ## Try sample mode
 
@@ -81,7 +81,11 @@ The simulator profile produces an unsigned iOS simulator app. The Android previe
 
 The teal card shows the actual camera event time in Pacific time. Missing camera timestamps stay unknown; receipt time is labelled separately. A sighting does not establish vehicle identity, direction, or departure.
 
-The arrival range and dashed route zone come only from an eligible server prediction. The range is heuristic and uncalibrated. The schematic is not a geographical map, and no device location permission is requested.
+The arrival range and amber 3D marker come only from an eligible server prediction. The range is heuristic and uncalibrated. The modeled map does not establish GPS position, and no device location permission is requested. The map stays available when the feed is unavailable, but position estimates disappear.
+
+Use Campus, Full route, Fehren, Buildings, and Sports to change the camera. Drag to pan, switch to Orbit to rotate, or use the zoom buttons. Locate estimate centers the current estimate. Expand map hides the details until you choose Show details.
+
+The generated scene is committed so mobile builds work independently. After changing scene code or assets, run `npm run build:mobile-scene` at the repository root. Run `npm run check:mobile-scene` to verify deterministic packaging, offline rendering, camera controls, marker expiry, and rendering suspension. Install the test browser first with `npx playwright install chromium`.
 
 Polling runs every ten seconds while foregrounded, with a ten-second request timeout. Failed requests, backgrounding, source changes, and responses older than 45 seconds hide estimates. Mailbox checks older than 120 seconds also hide estimates, even if the API is reachable. This is a conservative client policy; configure worker polling below 30 seconds or adapt both policies together. Timestamps more than 30 seconds ahead are rejected for freshness. A fresh feed can legitimately contain an old camera observation.
 

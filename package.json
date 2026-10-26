@@ -16,7 +16,9 @@
     "alerts:sample": "node server/index.mjs --sample",
     "test:alerts": "node --test server/*.test.mjs",
     "alerts:check": "node --env-file=.env.server server/index.mjs --once",
-    "alerts:export": "node server/export-history.mjs"
+    "alerts:export": "node server/export-history.mjs",
+    "build:mobile-scene": "node scripts/build-mobile-scene.mjs",
+    "check:mobile-scene": "node scripts/build-mobile-scene.mjs --check && node scripts/check-mobile-scene.mjs"
   },
   "dependencies": {
     "@turf/buffer": "^7.4.0",
@@ -33,6 +35,7 @@
     "@types/react-dom": "^19.1.0",
     "@types/three": "^0.180.0",
     "@vitejs/plugin-react": "^5.0.0",
+    "esbuild": "0.28.2",
     "playwright": "^1.63.0",
     "polyclip-ts": "^0.16.8",
     "sharp": "^0.35.4",
